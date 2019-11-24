@@ -34,7 +34,7 @@ struct Graph* readFile(char* filename)
 			exit(1);
 		}
 
-		addEdge(graph, atoi(token), atoi(token2)); 
+		addEdge(graph, atoi(token), atoi(token2), atoi(token3)); 
 	}
 
 	fclose (fp);

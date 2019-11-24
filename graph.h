@@ -28,11 +28,11 @@ struct Graph
     struct AdjList* array; 
 };
 
-struct AdjListNode* newAdjListNode(int dest);
+struct AdjListNode* newAdjListNode(int dest, int commercialRelationship);
 
 struct Graph* createGraph(int V);
 
-void addEdge(struct Graph* graph, int src, int dest);
+void addEdge(struct Graph* graph, int src, int dest, int commercialRelationship);
 
 void printGraph(struct Graph* graph);
 

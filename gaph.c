@@ -4,10 +4,11 @@
 #include "graph.h"
   
 // A utility function to create a new adjacency list node 
-struct AdjListNode* newAdjListNode(int dest) 
+struct AdjListNode* newAdjListNode(int dest, int commercialRelationship) 
 { 
     struct AdjListNode* newNode = (struct AdjListNode*) malloc(sizeof(struct AdjListNode)); 
-    newNode->dest = dest; 
+    newNode->dest = dest;
+    newNode->commercialRelationship = commercialRelationship; 
     newNode->next = NULL; 
     return newNode; 
 } 
@@ -32,7 +33,7 @@ struct Graph* createGraph(int V)
 } 
   
 // Adds an edge to an undirected graph 
-void addEdge(struct Graph* graph, int src, int dest) 
+void addEdge(struct Graph* graph, int src, int dest, int commercialRelationship) 
 {
     if (src >= MAXSIZE || dest >= MAXSIZE) {
         printf("Invalid values in the input file\n");
@@ -42,7 +43,7 @@ void addEdge(struct Graph* graph, int src, int dest)
     // Add an edge from src to dest.  A new node is  
     // added to the adjacency list of src.  The node 
     // is added at the begining 
-    struct AdjListNode* newNode = newAdjListNode(dest); 
+    struct AdjListNode* newNode = newAdjListNode(dest, commercialRelationship); 
     newNode->next = graph->array[src].head; 
     graph->array[src].head = newNode;
 } 
@@ -58,7 +59,7 @@ void printGraph(struct Graph* graph)
         printf("\n Adjacency list of vertex %d\n head", v); 
         while (pCrawl) 
         { 
-            printf(" -> %d", pCrawl->dest); 
+            printf(" -> %d|%d", pCrawl->dest, pCrawl->commercialRelationship); 
             pCrawl = pCrawl->next; 
         } 
         printf("\n"); 
