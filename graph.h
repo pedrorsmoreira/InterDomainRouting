@@ -8,8 +8,9 @@
 struct AdjListNode 
 { 
     int dest;
+    int commercialRelationship;
     struct AdjListNode* next; 
-}; 
+};
   
 // A structure to represent an adjacency list 
 struct AdjList 

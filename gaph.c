@@ -39,7 +39,6 @@ void addEdge(struct Graph* graph, int src, int dest)
         exit(1);
     }
 
-
     // Add an edge from src to dest.  A new node is  
     // added to the adjacency list of src.  The node 
     // is added at the begining 
