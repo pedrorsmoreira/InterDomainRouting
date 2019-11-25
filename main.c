@@ -2,7 +2,9 @@
 #include <stdlib.h>
 #include <getopt.h>
 
-#include <string.h>
+
+#include <time.h>
+
 
 #include "graph.h"
 
@@ -63,9 +65,25 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	clock_t begin = clock();
+
+
+
 	struct Graph* graph = readFile(filename);
 
-	printGraph(graph);
+	//printGraph(graph);
+	//printf("\n");
+	
+	if (!checkCommercialConnectedness(graph))
+		printf("NOT COMMERCIAL CONNECTED\n");
+
+
+
+
+s
+	clock_t end = clock();
+	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+	printf("Elapsed time: %f seconds\n", time_spent);
 
 	return 0;  
 }
