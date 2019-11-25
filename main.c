@@ -79,8 +79,6 @@ int main(int argc, char *argv[])
 
 
 
-
-s
 	clock_t end = clock();
 	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 	printf("Elapsed time: %f seconds\n", time_spent);
