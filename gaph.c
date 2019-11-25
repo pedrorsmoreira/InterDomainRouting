@@ -47,7 +47,7 @@ void addEdge(struct Graph* graph, int src, int dest, int commercialRelationship)
     newNode->next = graph->array[src].head; 
     graph->array[src].head = newNode;
 } 
-  
+
 // A utility function to print the adjacency list  
 // representation of graph 
 void printGraph(struct Graph* graph) 
@@ -64,4 +64,53 @@ void printGraph(struct Graph* graph)
         } 
         printf("\n"); 
     } 
+}
+
+void freeAdjList(struct AdjListNode * list){
+    while (list != NULL){
+        struct AdjListNode *aux = list->next;
+        free(list);
+        list = aux;
+    }
+}
+
+void freeGraph(struct Graph* graph){
+    for (int i = 0;  i < graph->V; ++i)
+        freeAdjList(graph->array[i].head);
+}
+
+#define maxWT 10000
+#define P (wt[*v] + ((node*)(t->this))->cost)
+
+int st[], int wt[];
+
+void GenDijkstra(struct Graph * graph, Heap *h, int source)
+{
+    int *v, w, *vertecisPos = getHeapElementes_pos(h);
+    LinkedList *t;
+
+    for (int i = 0; i < graph->V; i++) {
+        v = (int *)malloc(sizeof(int));
+        if (v == NULL)      exit(0);
+        *v = i;
+        st[i] = -1;
+        wt[i] = maxWT;
+        Direct_Insert(h, (Item) v);
+        vertecisPos[i] = i;
+    }
+
+     wt[source] = 0;
+     FixUp(h, source);
+
+    for(v = RemoveMax(h); *v != destination && wt[*v] != maxWT; v = RemoveMax(h)){
+        for (t = Graph[*v]; t != NULL; t = t->next)
+            if (((node*)(t->this))->cost <= maxCost && wt[w = ((node*)(t->this))->vertex] > P){
+            wt[w] = P;
+            FixUp(h, vertecisPos[w]);
+            st[w] = *v;
+            }
+     free (v);
+    }
+
+    free(v);
 }

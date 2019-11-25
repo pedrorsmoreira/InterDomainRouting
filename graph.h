@@ -36,5 +36,9 @@ void addEdge(struct Graph* graph, int src, int dest, int commercialRelationship)
 
 void printGraph(struct Graph* graph);
 
+void freeAdjList(struct AdjListNode * list);
+
+void freeGraph(struct Graph* graph);
+
 /* End if: Protect multiple inclusions                              */
 #endif

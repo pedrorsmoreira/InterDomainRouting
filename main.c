@@ -67,6 +67,8 @@ int main(int argc, char *argv[])
 
 	printGraph(graph);
 
+	freeGraph(graph);
+
 	return 0;  
 }
 
