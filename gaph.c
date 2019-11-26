@@ -24,23 +24,25 @@ struct Graph* createGraph(int V)
     // array will be V 
     graph->array = (struct AdjList*) malloc(V * sizeof(struct AdjList)); 
   
-    // Initialize each adjacency list as empty by  
-    // making head as NULL 
-    int i; 
-    for (i = 0; i < V; ++i) 
-        graph->array[i].head = NULL;
-
-    // Create arrays of size V that will be initialized with 0. 
-    // The first will be the nodes that already have been visited, 
-    // the second one te nodes that are not permited (this two 
-    // arrays will be used in the DFS to check customer cyclyes)
-    // and the last one to indicates the nodes that are Tier-1
-    graph->visited = (int*) malloc(V * sizeof(int));
-    memset(graph->visited, 0, V);
-    graph->notPermited = (int*) malloc(V * sizeof(int));
-    memset(graph->notPermited, 0, V);
+    // Create arrays of size V. The first will be the nodes 
+    // that already have been visited, the second one te 
+    // nodes that are not permited (this two arrays will be 
+    // used in the DFS to check customer cyclyes) and the 
+    // last one to indicates the nodes that are Tier-1
+    graph->visited = (bool*) malloc(V * sizeof(bool));
+    graph->notPermited = (bool*) malloc(V * sizeof(bool));
     graph->tier1 = (int*) malloc(V * sizeof(int));
-    memset(graph->tier1, 0, V);
+
+    // Initialize each adjacency list as empty by  
+    // making head as NULL and initialize the rest
+    // of the arrays
+    int i; 
+    for (i = 0; i < V; ++i) {
+        graph->array[i].head = NULL;
+        graph->visited[i] = false;
+        graph->notPermited[i] = false;
+        graph->tier1[i] = 0;
+    }
 
     return graph; 
 } 
@@ -107,26 +109,54 @@ void freeGraph(struct Graph* graph){
         freeAdjList(graph->array[i].head);
 }
 
-void DFS(struct Graph* graph, int vertex)
+
+
+
+
+void clearArrays(struct Graph* graph)
+{
+    for (int i = 0; i < graph->V; i++) {
+        graph->visited[i] = false;
+        graph->notPermited[i] = false;
+    }
+}
+
+bool DFS(struct Graph* graph, int vertex)
 {
     struct AdjListNode* aux = graph->array[vertex].head;
 
-    graph->visited[vertex] = 1;
-    printf("Visited %d \n", vertex);
+    graph->visited[vertex] = true;
+    graph->notPermited[vertex] = true;
 
     while(aux != NULL) {
-        if (/* condition */)
-        {
-            /* code */
+        if (aux->relation == 1) {
+            if (graph->notPermited[aux->dest] == true)
+                return false;
+            if (graph->visited[aux->dest] == false) {
+                if (!DFS(graph, aux->dest))
+                    return false;
+            }
+
         }
+        aux = aux->next;
     }
 
+    graph->notPermited[vertex] = false;
 
+    return true;
 }
 
 bool checkCustomersCycles(struct Graph* graph)
 {
+    for (int i = 0; i < MAXSIZE; i++){
+        if (graph->tier1[i] == 2) {
+            if (!DFS(graph, i))
+                return false;
+            clearArrays(graph);
+        }
+    }
 
+    return true;
 }
 
 bool checkCommercialConnectedness(struct Graph* graph)

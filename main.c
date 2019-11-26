@@ -76,12 +76,15 @@ int main(int argc, char *argv[])
 
 	struct Graph* graph = readFile(filename);
 
+	if (!checkCustomersCycles(graph))
+		printf("HAVE CUSTOMER CYCLES\n");
+
 	if (!checkCommercialConnectedness(graph))
 		printf("NOT COMMERCIAL CONNECTED\n");
 
 	
-	int vertexes = printGraph(graph);
-	printf("\n");
+	//int vertexes = printGraph(graph);
+	//printf("\n");
 	
 
 	//int exploredNodes = GenDijkstra(graph, NULL, 4);
