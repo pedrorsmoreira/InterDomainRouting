@@ -30,9 +30,8 @@ struct Graph* createGraph(int V)
     for (i = 0; i < V; ++i) 
         graph->array[i].head = NULL;
 
-    // Create an array of the nodes that are Tier-1.
-    // Size of array will be V and will be initialized
-    // with 0
+    // Create an array of the nodes that are Tier-1. Size 
+    // of array will be V and will be initialized with 0
     graph->tier1 = (int*) malloc(V * sizeof(int));
     memset(graph->tier1, 0, V); 
 
@@ -85,34 +84,23 @@ bool checkCommercialConnectedness(struct Graph* graph)
     int flag = 0;
     struct AdjListNode* aux = NULL;
 
-    for (int i = 0; i < MAXSIZE; i++) {
-        
-        //printf("i %d graph->tier1[i] %d\n", i, graph->tier1[i]);
-
-        if (graph->tier1[i] == 2) {
-            for(int j = i + 1; j < MAXSIZE; j++) {
-
-                //printf("j %d graph->tier1[j] %d\n", j, graph->tier1[j]);
-
+    for (int i = 0; i < MAXSIZE; i++)
+        if (graph->tier1[i] == 2)
+            for(int j = i + 1; j < MAXSIZE; j++)
                 if (graph->tier1[j] == 2) {
                     flag = 0;
                     aux = graph->array[i].head;
                     while(aux != NULL) {
-                        //printf("aux->dest %d\n", aux->dest);
                         if (aux->dest == j) {
                             flag = 1;
                             break;
                         }
-
                         aux = aux->next;
                     }
 
                     if (flag == 0)
                         return false;
                 }
-            }
-        }
-    }
 
     return true;
 }

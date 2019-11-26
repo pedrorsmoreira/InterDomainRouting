@@ -72,7 +72,6 @@ int main(int argc, char *argv[])
 	struct Graph* graph = readFile(filename);
 
 	//printGraph(graph);
-	//printf("\n");
 	
 	if (!checkCommercialConnectedness(graph))
 		printf("NOT COMMERCIAL CONNECTED\n");
@@ -81,7 +80,7 @@ int main(int argc, char *argv[])
 
 	clock_t end = clock();
 	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-	printf("Elapsed time: %f seconds\n", time_spent);
+	printf("\nElapsed time: %f seconds\n", time_spent);
 
 	return 0;  
 }
