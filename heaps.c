@@ -86,9 +86,9 @@ void FixUp(Heap * h, int k)
     (h->heapdata)[k] = (h->heapdata)[(k - 1) / 2];
     (h->heapdata)[(k - 1) / 2] = t;
 #ifdef WMspecs
-	aux = (h->elements_pos)[*((int*)((h->heapdata)[k]))];
-	(h->elements_pos)[*((int*)((h->heapdata)[k]))] = (h->elements_pos)[*((int*)((h->heapdata)[(k - 1) / 2]))];
-	(h->elements_pos)[*((int*)((h->heapdata)[(k - 1) / 2]))] = aux;
+	   aux = (h->elements_pos)[*((int*)((h->heapdata)[k]))];
+	   (h->elements_pos)[*((int*)((h->heapdata)[k]))] = (h->elements_pos)[*((int*)((h->heapdata)[(k - 1) / 2]))];
+	   (h->elements_pos)[*((int*)((h->heapdata)[(k - 1) / 2]))] = aux;
 #endif
     k = (k - 1) / 2;
   }

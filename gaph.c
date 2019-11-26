@@ -136,7 +136,7 @@ int GenDijkstra(struct Graph * graph, Heap *h_, int fakeSource)
 
     for(v = RemoveMax(h); wt[*v] != maxWT; v = RemoveMax(h)){
         ++ explored_nodes;
-        printf("DIJKSTRA %d\n", *v);
+        //printf("DIJKSTRA %d\n", *v);
         
         st[*v] = true;
         unsigned int lastcost = wt[*v];

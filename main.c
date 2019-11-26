@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 	int vertexes = printGraph(graph);
 	printf("\n");
 */
-	int exploredNodes = GenDijkstra(graph, NULL, 4);
+	//int exploredNodes = GenDijkstra(graph, NULL, 4);
 /*	for (int i =1, j=0; i <=43974; ++i)
 		if (GenDijkstra(graph, NULL, i) == vertexes)
 			printf("HEEEYYYpara i=%d, já vai em %d\n", i, ++j);
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
 	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 	printf("Elapsed time: %f seconds\n\n", time_spent);
 	//printf("There are %d ASes\n", vertexes);
-	printf("Dijkstra explored %d nodes\n\n", exploredNodes);
+	//printf("Dijkstra explored %d nodes\n\n", exploredNodes);
 	
 	freeGraph(graph);
 
