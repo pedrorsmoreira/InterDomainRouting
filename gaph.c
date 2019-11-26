@@ -107,7 +107,6 @@ void freeGraph(struct Graph* graph){
         freeAdjList(graph->array[i].head);
 }
 
-/*
 void DFS(struct Graph* graph, int vertex)
 {
     struct AdjListNode* aux = graph->array[vertex].head;
@@ -116,7 +115,10 @@ void DFS(struct Graph* graph, int vertex)
     printf("Visited %d \n", vertex);
 
     while(aux != NULL) {
-        
+        if (/* condition */)
+        {
+            /* code */
+        }
     }
 
 
@@ -126,7 +128,6 @@ bool checkCustomersCycles(struct Graph* graph)
 {
 
 }
-*/
 
 bool checkCommercialConnectedness(struct Graph* graph)
 {
