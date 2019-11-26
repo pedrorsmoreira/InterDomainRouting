@@ -44,9 +44,17 @@ struct Graph* readFile(char* filename)
 	return graph;
 }
 
+
+
+
+
 #include <float.h>
 
 const double lowest_double = DBL_MIN;
+
+extern int *wt;
+extern bool *st;
+extern unsigned int *lastcost;
 
 int main(int argc, char *argv[]) 
 { 
@@ -87,15 +95,39 @@ int main(int argc, char *argv[])
 	//int vertexes = printGraph(graph);
 	//printf("\n");
 
-	//for (int i =1, j=0; i <= 500; ++i) {
-	for (int i =1, j=0; i <= MAXSIZE; ++i) {
+
+	//GET READY FOR DIJKSTRA
+	wt = (int *) malloc(MAXSIZE * sizeof(int));
+    st = (bool *) malloc(MAXSIZE * sizeof(bool));
+    lastcost = (unsigned int *) malloc(MAXSIZE * sizeof(unsigned int));
+	
+	Heap* h = NewHeap(MAXSIZE, LessNum);
+	int *vertecisPos = getHeapElementes_pos(h);
+
+	for (int i = 0; i < graph->V; ++i) {
+        int *v = (int *) malloc(sizeof(int)); //fazer isto fora e depois mudar só e dar os "free(v)" só no fim
+        if (v == NULL) printf("failed malloc\n");;
+        
+        *v = i;
+        Direct_Insert(h, (Item) v);
+        vertecisPos[i] = i;
+    }
+    //READY FOR DIJKSTRA
+
+    int exploredtotal = 0;
+	for (int i =1, j=0; i <= 500; ++i) {
+	//for (int i =1, j=0; i <= MAXSIZE; ++i) {
 		if (graph->tier1[i] > 0)
-			GenDijkstra(graph, NULL, i);
+			exploredtotal+=GenDijkstra(graph, h, i);
+			//printf("------------DIJKSTRA%d\n", GenDijkstra(graph, h, i));
 
 		//printf("\ni: %d\n", i);
 	}
 	
-
+	//free memory alloced for dijkstra
+	free(wt); free(st);
+	free(lastcost);
+	FreeHeap(h);
 
 	clock_t end = clock();
 	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
@@ -103,7 +135,8 @@ int main(int argc, char *argv[])
 	printf("Elapsed time: %f seconds\n\n", time_spent);
 	//printf("There are %d ASes\n", vertexes);
 	//printf("Dijkstra explored %d nodes\n\n", exploredNodes);
-	
+	printf("Dijkstra explored %d nodes\n\n", exploredtotal);
+
 	freeGraph(graph);
 
 	return 0;  

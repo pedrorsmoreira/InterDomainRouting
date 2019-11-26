@@ -35,6 +35,8 @@ void CleanHeap(Heap * h);
 
 void FreeHeap(Heap * h);
 
+void resetHeapElementsNr(Heap *h, int elementsNr);
+
 
 /* End if: Protect multiple inclusions                              */
 #endif

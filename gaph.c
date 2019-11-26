@@ -51,7 +51,7 @@ struct Graph* createGraph(int V)
 void addEdge(struct Graph* graph, int src, int dest, int relation) 
 {
     if (src >= MAXSIZE || dest >= MAXSIZE) {
-        printf("Invalid values in the input file\n");
+        //printf("Invalid values in the input file\n");
         exit(1);
     }
 
@@ -79,16 +79,16 @@ int printGraph(struct Graph* graph)
     for (v = 0; v < graph->V; ++v) 
     { 
         struct AdjListNode* pCrawl = graph->array[v].head; 
-        printf("\n Adjacency list of vertex %d\n head", v); 
+        //printf("\n Adjacency list of vertex %d\n head", v); 
         if(pCrawl != NULL)
             ++vertexes;
 
         while (pCrawl) 
         { 
-            printf(" -> %d|%d", pCrawl->dest, pCrawl->relation); 
+            //printf(" -> %d|%d", pCrawl->dest, pCrawl->relation); 
             pCrawl = pCrawl->next; 
         } 
-        printf("\n"); 
+        //printf("\n"); 
     }
     return vertexes; 
 }
@@ -195,61 +195,47 @@ int LessNum(Item a, Item b)
     return (wt[aa] < wt[bb]);
 }
 
-int GenDijkstra(struct Graph * graph, Heap *h_, int fakeSource)
-{
+int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
+{   
+    resetHeapElementsNr(h, MAXSIZE);
     int explored_nodes = 0;
-    Heap* h = NewHeap(MAXSIZE, LessNum);
-    int* v, *vertecisPos = getHeapElementes_pos(h);
-    struct AdjListNode* t;
-    wt = (int *) malloc(MAXSIZE * sizeof(int));
-    st = (bool *) malloc(MAXSIZE * sizeof(bool));
-    lastcost = (unsigned int *) malloc(MAXSIZE * sizeof(unsigned int));
 
-    for (int i = 0; i < graph->V; i++) {
-        v = (int *) malloc(sizeof(int)); //fazer isto fora e depois mudar só e dar os "free(v)" só no fim
-        if (v == NULL) exit(0);
-        *v = i;
+    int *HeapPositions = getHeapElementes_pos(h);
+    int* v=NULL; 
+    struct AdjListNode* t=NULL;
+
+    for (int i = 0; i < graph->V; ++i) {
+        if (graph->tier1[i] == 0)
+            continue;
+
         wt[i] = maxWT;
         st[i] = false;
         lastcost[i] = 3;
-        Direct_Insert(h, (Item) v);
-        vertecisPos[i] = i;
     }
 
-     wt[fakeSource] = 3;//bc of lastcost condition
-     //lastcost[fakeSource] = 3;
-     FixUp(h, fakeSource);
+     wt[fakeSource] = 3;
+     FixUp(h, HeapPositions[fakeSource]);
 
-    for(v = RemoveMax(h); wt[*v] != maxWT; v = RemoveMax(h)) {
+    for(v = RemoveMax(h); wt[*v] != maxWT; v = RemoveMax(h),
+                                            st[*v] = true, 
+                                            ++explored_nodes) {
         //printf("\nDIJKSTRA %d wt[*v] %d\n", *v, wt[*v]);
-        if (wt[*v] == 1){
-            //printf("bazei\n");
-            break;
-        }
+        //if (wt[*v] == 1){
+            ////printf("bazei\n");
+        //    break;
+        //}
 
-        ++explored_nodes;
-        
-        
-        st[*v] = true;
-
-        //unsigned int lastcost = wt[*v];
-        //if (lastcost == 2)
-        //    --lastcost;
-        for (t = graph->array[*v].head; t != NULL; t = t->next) { //printf("FFFOOOORRRR   %d\n", t->dest);
-            //printf("last do vertex a ser expandido é %d dest é  %d wt[t->dest] é %d e relation é %d\n", lastcost[*v], t->dest, wt[t->dest], t->relation);
-            if (!st[t->dest] && t->relation <= lastcost[*v] && t->relation > wt[t->dest]){ //printf("IIIIIIFFFFFF\n");
+        for (t = graph->array[*v].head; t != NULL; t = t->next) { ////printf("FFFOOOORRRR   %d\n", t->dest);
+            if (!st[t->dest] && t->relation <= lastcost[*v] && t->relation > wt[t->dest]){ ////printf("IIIIIIFFFFFF\n");
                 wt[t->dest] = t->relation;
                 lastcost[t->dest] = (t->relation == 2) ? t->relation - 1 : t->relation;
-                FixUp(h, vertecisPos[t->dest]);
+                FixUp(h, HeapPositions[t->dest]);
 
                 //printf("wt[t->dest] é %d lastcost[t->dest] %d\n", wt[t->dest], lastcost[t->dest]);
             }
         }
-
-        free (v);
     }
-
-    free(v);
-
+    if (wt[*v] == maxWT) 
+        //printf("ZZZZZZZZZZZZZZZZZZ, %d |||| %d |||||\n", *v, fakeSource);
     return explored_nodes;
 }

@@ -235,3 +235,7 @@ void FreeHeap(Heap * h)
 #endif
 	free(h);
 }
+
+void resetHeapElementsNr(Heap *h, int elementsNr){
+	h->n_elements = elementsNr;
+}
