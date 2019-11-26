@@ -5,11 +5,9 @@
 
 #include <time.h>
 
-
 #include "graph.h"
 
 void print_usage(char*);
-
 
 struct Graph* readFile(char* filename)
 {
@@ -77,25 +75,33 @@ int main(int argc, char *argv[])
 
 
 	struct Graph* graph = readFile(filename);
-/*
-	int vertexes = printGraph(graph);
-	printf("\n");
-*/
-	//int exploredNodes = GenDijkstra(graph, NULL, 4);
-/*	for (int i =1, j=0; i <=43974; ++i)
-		if (GenDijkstra(graph, NULL, i) == vertexes)
-			printf("HEEEYYYpara i=%d, já vai em %d\n", i, ++j);
-*/	
+
 	if (!checkCommercialConnectedness(graph))
 		printf("NOT COMMERCIAL CONNECTED\n");
 
+	
+	int vertexes = printGraph(graph);
+	printf("\n");
+
+	int exploredNodes = GenDijkstra(graph, NULL, 4);
+/*	for (int i =1, j=0; i <=43974; ++i)
+
+	
+
+	//int exploredNodes = GenDijkstra(graph, NULL, 4);
+*/
+	for (int i =1, j=0; i <= 100; ++i)
+		if (graph->tier1[i] > 0 && GenDijkstra(graph, NULL, i) != vertexes)
+			printf("HEEEYYYpara i=%d, já vai em %d\n", i, ++j);
+	
 
 
 	clock_t end = clock();
 	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+
 	printf("Elapsed time: %f seconds\n\n", time_spent);
-	//printf("There are %d ASes\n", vertexes);
-	//printf("Dijkstra explored %d nodes\n\n", exploredNodes);
+	printf("There are %d ASes\n", vertexes);
+	printf("Dijkstra explored %d nodes\n\n", exploredNodes);
 	
 	freeGraph(graph);
 

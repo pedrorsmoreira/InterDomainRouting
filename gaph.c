@@ -98,9 +98,11 @@ void freeGraph(struct Graph* graph){
         freeAdjList(graph->array[i].head);
 }
 
-#define maxWT 4
+#define maxWT 0
 
-int *wt; bool *st;
+int *wt = NULL;
+bool *st = NULL;
+unsigned int *lastcost = NULL;
 
 int LessNum(Item a, Item b)
 {
@@ -109,7 +111,7 @@ int LessNum(Item a, Item b)
   aa = *((int *)a);
   bb = *((int *)b);
 
-  return (wt[aa] > wt[bb]);
+  return (wt[aa] < wt[bb]);
 }
 
 int GenDijkstra(struct Graph * graph, Heap *h_, int fakeSource)
@@ -120,6 +122,7 @@ int GenDijkstra(struct Graph * graph, Heap *h_, int fakeSource)
     struct AdjListNode* t;
     wt = (int *)malloc(MAXSIZE * sizeof(int));
     st = (bool *)malloc(MAXSIZE * sizeof(bool));
+    lastcost = (unsigned int *)malloc(MAXSIZE * sizeof(unsigned int));
 
     for (int i = 0; i < graph->V; i++) {
         v = (int *)malloc(sizeof(int)); //fazer isto fora e depois mudar só e dar os "free(v)" só no fim
@@ -127,11 +130,13 @@ int GenDijkstra(struct Graph * graph, Heap *h_, int fakeSource)
         *v = i;
         wt[i] = maxWT;
         st[i] = false;
+        lastcost[i] = 3;
         Direct_Insert(h, (Item) v);
         vertecisPos[i] = i;
     }
 
      wt[fakeSource] = 3;//bc of lastcost condition
+     //lastcost[fakeSource] = 3;
      FixUp(h, fakeSource);
 
     for(v = RemoveMax(h); wt[*v] != maxWT; v = RemoveMax(h)){
@@ -139,12 +144,13 @@ int GenDijkstra(struct Graph * graph, Heap *h_, int fakeSource)
         //printf("DIJKSTRA %d\n", *v);
         
         st[*v] = true;
-        unsigned int lastcost = wt[*v];
-        if (lastcost == 2)
-            --lastcost;
+        //unsigned int lastcost = wt[*v];
+        //if (lastcost == 2)
+        //    --lastcost;
         for (t = graph->array[*v].head; t != NULL; t = t->next){//printf("FFFOOOORRRR   %d\n", t->dest);
-            if (!st[t->dest] && t->relation <= lastcost && wt[t->dest] > t->relation){//printf("IIIIIIFFFFFF\n");
+            if (!st[t->dest] && t->relation <= lastcost[t->dest] && wt[t->dest] < t->relation){//printf("IIIIIIFFFFFF\n");
                 wt[t->dest] = t->relation;
+                lastcost[t->dest] = (t->relation == 2) ? t->relation : t->relation+1;
                 FixUp(h, vertecisPos[t->dest]);
             }
         }

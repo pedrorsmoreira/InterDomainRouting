@@ -19,12 +19,12 @@
 
 /* A heap is represented by a structure: */
 struct _heap {
-  int (*less) (Item, Item);     /* this field is a function pointer to elements in the heap. */
-  int n_elements;               /* # elements in heap. */
-  int size;                     /* max size of the heap. */
-  Item *heapdata;               /* An array of Items. */
+  int (*less) (Item, Item); /* this field is a function pointer to elements in the heap. */
+  int n_elements;           /* # elements in heap. */
+  int size;                 /* max size of the heap. */
+  Item *heapdata;           /* An array of Items. */
 #ifdef WMspecs
-  int *elements_pos;			/* An array holding the elements position in the heapdata*/
+  int *elements_pos;        /* An array holding the elements position in the heapdata*/
 #endif
 };
 

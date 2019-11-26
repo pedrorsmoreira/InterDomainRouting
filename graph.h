@@ -31,6 +31,9 @@ struct Graph
 { 
     int V; 
     struct AdjList* array;
+    
+    int* visited;
+    int* notPermited;
     int* tier1;
 };
 
@@ -42,10 +45,12 @@ void addEdge(struct Graph* graph, int src, int dest, int relation);
 
 int printGraph(struct Graph* graph);
 
-
 void freeAdjList(struct AdjListNode * list);
 
 void freeGraph(struct Graph* graph);
+
+
+bool checkCustomersCycles(struct Graph* graph);
 
 bool checkCommercialConnectedness(struct Graph* graph);
 
