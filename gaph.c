@@ -199,7 +199,7 @@ int GenDijkstra(struct Graph * graph, Heap *h_, int fakeSource)
 {
     int explored_nodes = 0;
     Heap* h = NewHeap(MAXSIZE, LessNum);
-    int* v, w, *vertecisPos = getHeapElementes_pos(h);
+    int* v, *vertecisPos = getHeapElementes_pos(h);
     struct AdjListNode* t;
     wt = (int *) malloc(MAXSIZE * sizeof(int));
     st = (bool *) malloc(MAXSIZE * sizeof(bool));
@@ -221,19 +221,28 @@ int GenDijkstra(struct Graph * graph, Heap *h_, int fakeSource)
      FixUp(h, fakeSource);
 
     for(v = RemoveMax(h); wt[*v] != maxWT; v = RemoveMax(h)) {
-        ++ explored_nodes;
-        printf("\nDIJKSTRA %d\n", *v);
+        //printf("\nDIJKSTRA %d wt[*v] %d\n", *v, wt[*v]);
+        if (wt[*v] == 1){
+            //printf("bazei\n");
+            break;
+        }
+
+        ++explored_nodes;
+        
         
         st[*v] = true;
+
         //unsigned int lastcost = wt[*v];
         //if (lastcost == 2)
         //    --lastcost;
         for (t = graph->array[*v].head; t != NULL; t = t->next) { //printf("FFFOOOORRRR   %d\n", t->dest);
-            printf("dest é %d last é %d e relation é %d\n", t->dest, lastcost[*v], t->relation);
+            //printf("last do vertex a ser expandido é %d dest é  %d wt[t->dest] é %d e relation é %d\n", lastcost[*v], t->dest, wt[t->dest], t->relation);
             if (!st[t->dest] && t->relation <= lastcost[*v] && t->relation > wt[t->dest]){ //printf("IIIIIIFFFFFF\n");
                 wt[t->dest] = t->relation;
                 lastcost[t->dest] = (t->relation == 2) ? t->relation - 1 : t->relation;
                 FixUp(h, vertecisPos[t->dest]);
+
+                //printf("wt[t->dest] é %d lastcost[t->dest] %d\n", wt[t->dest], lastcost[t->dest]);
             }
         }
 

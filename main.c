@@ -17,8 +17,9 @@ struct Graph* readFile(char* filename)
 		exit(1);
 	}
 
+	// APAGUEI O +1 - CONFIRMAR QUE NAO HA STRESS
 	//the 1 added to MAXSIZE is for a bug correction in the dijkstra main cicle (this way the heap will always have a node with maxWT)
-	struct Graph* graph = createGraph(MAXSIZE+1);
+	struct Graph* graph = createGraph(MAXSIZE);
 
 	char line[128]; /* maximum line size */
 
@@ -83,18 +84,17 @@ int main(int argc, char *argv[])
 		printf("NOT COMMERCIAL CONNECTED\n");
 
 
-	int exploredNodes = GenDijkstra(graph, NULL, 5);
+	//int vertexes = printGraph(graph);
+	//printf("\n");
 
-	/*
-	int vertexes = printGraph(graph);
-	printf("\n");
+	//for (int i =1, j=0; i <= 500; ++i) {
+	for (int i =1, j=0; i <= MAXSIZE; ++i) {
+		if (graph->tier1[i] > 0)
+			GenDijkstra(graph, NULL, i);
 
-	int exploredNodes = GenDijkstra(graph, NULL, 4);
-
-	for (int i =1, j=0; i <= 100; ++i)
-		if (graph->tier1[i] > 0 && GenDijkstra(graph, NULL, i) != vertexes)
-			printf("HEEEYYYpara i=%d, já vai em %d\n", i, ++j);
-	*/
+		//printf("\ni: %d\n", i);
+	}
+	
 
 
 	clock_t end = clock();
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 
 	printf("Elapsed time: %f seconds\n\n", time_spent);
 	//printf("There are %d ASes\n", vertexes);
-	printf("Dijkstra explored %d nodes\n\n", exploredNodes);
+	//printf("Dijkstra explored %d nodes\n\n", exploredNodes);
 	
 	freeGraph(graph);
 
