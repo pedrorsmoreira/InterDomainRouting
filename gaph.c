@@ -181,33 +181,33 @@ bool checkCommercialConnectedness(struct Graph* graph)
 
 
 #define maxWT 0
-int *wt = NULL;
-bool *st = NULL;
-unsigned int *lastcost = NULL;
+int* wt = NULL;
+bool* st = NULL;
+unsigned int* lastcost = NULL;
 
 int LessNum(Item a, Item b)
 {
-  int aa, bb;
+    int aa, bb;
 
-  aa = *((int *)a);
-  bb = *((int *)b);
+    aa = *((int *)a);
+    bb = *((int *)b);
 
-  return (wt[aa] < wt[bb]);
+    return (wt[aa] < wt[bb]);
 }
 
 int GenDijkstra(struct Graph * graph, Heap *h_, int fakeSource)
 {
     int explored_nodes = 0;
-    Heap *h = NewHeap(MAXSIZE, LessNum);
-    int *v, w, *vertecisPos = getHeapElementes_pos(h);
+    Heap* h = NewHeap(MAXSIZE, LessNum);
+    int* v, w, *vertecisPos = getHeapElementes_pos(h);
     struct AdjListNode* t;
-    wt = (int *)malloc(MAXSIZE * sizeof(int));
-    st = (bool *)malloc(MAXSIZE * sizeof(bool));
-    lastcost = (unsigned int *)malloc(MAXSIZE * sizeof(unsigned int));
+    wt = (int *) malloc(MAXSIZE * sizeof(int));
+    st = (bool *) malloc(MAXSIZE * sizeof(bool));
+    lastcost = (unsigned int *) malloc(MAXSIZE * sizeof(unsigned int));
 
     for (int i = 0; i < graph->V; i++) {
-        v = (int *)malloc(sizeof(int)); //fazer isto fora e depois mudar só e dar os "free(v)" só no fim
-        if (v == NULL)      exit(0);
+        v = (int *) malloc(sizeof(int)); //fazer isto fora e depois mudar só e dar os "free(v)" só no fim
+        if (v == NULL) exit(0);
         *v = i;
         wt[i] = maxWT;
         st[i] = false;
@@ -220,22 +220,24 @@ int GenDijkstra(struct Graph * graph, Heap *h_, int fakeSource)
      //lastcost[fakeSource] = 3;
      FixUp(h, fakeSource);
 
-    for(v = RemoveMax(h); wt[*v] != maxWT; v = RemoveMax(h)){
+    for(v = RemoveMax(h); wt[*v] != maxWT; v = RemoveMax(h)) {
         ++ explored_nodes;
-        //printf("DIJKSTRA %d\n", *v);
+        printf("\nDIJKSTRA %d\n", *v);
         
         st[*v] = true;
         //unsigned int lastcost = wt[*v];
         //if (lastcost == 2)
         //    --lastcost;
-        for (t = graph->array[*v].head; t != NULL; t = t->next){//printf("FFFOOOORRRR   %d\n", t->dest);
-            if (!st[t->dest] && t->relation <= lastcost[t->dest] && wt[t->dest] < t->relation){//printf("IIIIIIFFFFFF\n");
+        for (t = graph->array[*v].head; t != NULL; t = t->next) { //printf("FFFOOOORRRR   %d\n", t->dest);
+            printf("dest é %d last é %d e relation é %d\n", t->dest, lastcost[t->dest], t->relation);
+            if (!st[t->dest] && t->relation <= lastcost[t->dest] && t->relation > wt[t->dest]){ //printf("IIIIIIFFFFFF\n");
                 wt[t->dest] = t->relation;
-                lastcost[t->dest] = (t->relation == 2) ? t->relation : t->relation+1;
+                lastcost[t->dest] = (t->relation == 2) ? t->relation - 1 : t->relation;
                 FixUp(h, vertecisPos[t->dest]);
             }
         }
-     free (v);
+
+        free (v);
     }
 
     free(v);

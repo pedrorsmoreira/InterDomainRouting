@@ -7,7 +7,7 @@
 
 #include "heaps.h"
 
-#define MAXSIZE 65536
+#define MAXSIZE 12//65536
 
 // A structure to represent an adjacency list node 
 struct AdjListNode 

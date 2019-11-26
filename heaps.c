@@ -44,6 +44,7 @@ struct _heap
 Heap *NewHeap(int size, int (*less) (Item, Item))
 {
 	Heap *h;
+
 	h = (Heap *) malloc(sizeof(Heap));
 	if (h == ((Heap *) NULL)) exit(0);
 
@@ -54,7 +55,7 @@ Heap *NewHeap(int size, int (*less) (Item, Item))
 	if (h->heapdata == ((Item *) NULL)) exit(0);
 #ifdef WMspecs
 	h->elements_pos = (int *) malloc(size * sizeof(int));
-	if (h->heapdata == NULL) exit(0);
+	if (h->elements_pos == NULL) exit(0);
 #endif
 
 	return (h);
@@ -83,16 +84,17 @@ void FixUp(Heap * h, int k)
 {
 	int aux;
 	Item t;
+	
 	while ((k > 0) && (h->less) ((h->heapdata)[(k - 1) / 2], (h->heapdata)[k])) {
 		t = (h->heapdata)[k];
 		(h->heapdata)[k] = (h->heapdata)[(k - 1) / 2];
 		(h->heapdata)[(k - 1) / 2] = t;
 #ifdef WMspecs
-	   aux = (h->elements_pos)[*((int*)((h->heapdata)[k]))];
-	   (h->elements_pos)[*((int*)((h->heapdata)[k]))] = (h->elements_pos)[*((int*)((h->heapdata)[(k - 1) / 2]))];
-	   (h->elements_pos)[*((int*)((h->heapdata)[(k - 1) / 2]))] = aux;
+		aux = (h->elements_pos)[*((int*)((h->heapdata)[k]))];
+		(h->elements_pos)[*((int*)((h->heapdata)[k]))] = (h->elements_pos)[*((int*)((h->heapdata)[(k - 1) / 2]))];
+		(h->elements_pos)[*((int*)((h->heapdata)[(k - 1) / 2]))] = aux;
 #endif
-	   k = (k - 1) / 2;
+		k = (k - 1) / 2;
 	}
 
 	return;
@@ -190,7 +192,7 @@ int Direct_Insert(Heap * h, Item element)
 {
 	if (h->n_elements == h->size) return 0;
 
-	h->heapdata[h->n_elements ++] = element;
+	h->heapdata[h->n_elements++] = element;
 
 	return 1;
 }
