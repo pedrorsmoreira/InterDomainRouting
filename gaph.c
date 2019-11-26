@@ -229,8 +229,8 @@ int GenDijkstra(struct Graph * graph, Heap *h_, int fakeSource)
         //if (lastcost == 2)
         //    --lastcost;
         for (t = graph->array[*v].head; t != NULL; t = t->next) { //printf("FFFOOOORRRR   %d\n", t->dest);
-            printf("dest é %d last é %d e relation é %d\n", t->dest, lastcost[t->dest], t->relation);
-            if (!st[t->dest] && t->relation <= lastcost[t->dest] && t->relation > wt[t->dest]){ //printf("IIIIIIFFFFFF\n");
+            printf("dest é %d last é %d e relation é %d\n", t->dest, lastcost[*v], t->relation);
+            if (!st[t->dest] && t->relation <= lastcost[*v] && t->relation > wt[t->dest]){ //printf("IIIIIIFFFFFF\n");
                 wt[t->dest] = t->relation;
                 lastcost[t->dest] = (t->relation == 2) ? t->relation - 1 : t->relation;
                 FixUp(h, vertecisPos[t->dest]);
