@@ -19,7 +19,8 @@ struct Graph* readFile(char* filename)
 		exit(1);
 	}
 
-	struct Graph* graph = createGraph(MAXSIZE);
+	//the 1 added to MAXSIZE is for a bug correction in the dijkstra main cicle (this way the heap will always have a node with maxWT)
+	struct Graph* graph = createGraph(MAXSIZE+1);
 
 	char line[128]; /* maximum line size */
 
@@ -44,8 +45,14 @@ struct Graph* readFile(char* filename)
 	return graph;
 }
 
+#include <float.h>
+
+const double lowest_double = DBL_MIN;
+
 int main(int argc, char *argv[]) 
 { 
+	printf("lowest_double %lf\n", lowest_double);
+
 	int opt;
 	char* filename = NULL;
 
@@ -70,10 +77,15 @@ int main(int argc, char *argv[])
 
 
 	struct Graph* graph = readFile(filename);
-
-	//printGraph(graph);
-	//printf("\n");
-	
+/*
+	int vertexes = printGraph(graph);
+	printf("\n");
+*/
+	int exploredNodes = GenDijkstra(graph, NULL, 4);
+/*	for (int i =1, j=0; i <=43974; ++i)
+		if (GenDijkstra(graph, NULL, i) == vertexes)
+			printf("HEEEYYYpara i=%d, já vai em %d\n", i, ++j);
+*/	
 	if (!checkCommercialConnectedness(graph))
 		printf("NOT COMMERCIAL CONNECTED\n");
 
@@ -81,8 +93,10 @@ int main(int argc, char *argv[])
 
 	clock_t end = clock();
 	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
-	printf("Elapsed time: %f seconds\n", time_spent);
-
+	printf("Elapsed time: %f seconds\n\n", time_spent);
+	//printf("There are %d ASes\n", vertexes);
+	printf("Dijkstra explored %d nodes\n\n", exploredNodes);
+	
 	freeGraph(graph);
 
 	return 0;  

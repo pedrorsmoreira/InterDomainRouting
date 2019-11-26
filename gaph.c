@@ -5,11 +5,11 @@
 #include "graph.h"
   
 // A utility function to create a new adjacency list node 
-struct AdjListNode* newAdjListNode(int dest, int commercialRelationship) 
+struct AdjListNode* newAdjListNode(int dest, int relation) 
 { 
     struct AdjListNode* newNode = (struct AdjListNode*) malloc(sizeof(struct AdjListNode)); 
     newNode->dest = dest;
-    newNode->commercialRelationship = commercialRelationship; 
+    newNode->relation = relation; 
     newNode->next = NULL; 
     return newNode; 
 } 
@@ -40,7 +40,7 @@ struct Graph* createGraph(int V)
 } 
   
 // Adds an edge to an undirected graph 
-void addEdge(struct Graph* graph, int src, int dest, int commercialRelationship) 
+void addEdge(struct Graph* graph, int src, int dest, int relation) 
 {
     if (src >= MAXSIZE || dest >= MAXSIZE) {
         printf("Invalid values in the input file\n");
@@ -48,7 +48,7 @@ void addEdge(struct Graph* graph, int src, int dest, int commercialRelationship)
     }
 
     // If this happen is not an AS of Tier-1
-    if (commercialRelationship == 3)
+    if (relation == 3)
         graph->tier1[src] = 1;
     else
         if (graph->tier1[src] == 0)
@@ -57,27 +57,32 @@ void addEdge(struct Graph* graph, int src, int dest, int commercialRelationship)
     // Add an edge from src to dest.  A new node is  
     // added to the adjacency list of src.  The node 
     // is added at the begining 
-    struct AdjListNode* newNode = newAdjListNode(dest, commercialRelationship); 
+    struct AdjListNode* newNode = newAdjListNode(dest, relation); 
     newNode->next = graph->array[src].head; 
     graph->array[src].head = newNode;
 } 
 
 // A utility function to print the adjacency list  
 // representation of graph 
-void printGraph(struct Graph* graph) 
+int printGraph(struct Graph* graph) 
 { 
-    int v; 
+    int v;
+    int vertexes = 0;
     for (v = 0; v < graph->V; ++v) 
     { 
         struct AdjListNode* pCrawl = graph->array[v].head; 
         printf("\n Adjacency list of vertex %d\n head", v); 
+        if(pCrawl != NULL)
+            ++vertexes;
+
         while (pCrawl) 
         { 
-            printf(" -> %d|%d", pCrawl->dest, pCrawl->commercialRelationship); 
+            printf(" -> %d|%d", pCrawl->dest, pCrawl->relation); 
             pCrawl = pCrawl->next; 
         } 
         printf("\n"); 
-    } 
+    }
+    return vertexes; 
 }
 
 void freeAdjList(struct AdjListNode * list){
@@ -93,40 +98,62 @@ void freeGraph(struct Graph* graph){
         freeAdjList(graph->array[i].head);
 }
 
-#define maxWT 10000
-#define P (wt[*v] + ((node*)(t->this))->cost)
+#define maxWT 4
 
-int st[], int wt[];
+int *wt; bool *st;
 
-void GenDijkstra(struct Graph * graph, Heap *h, int source)
+int LessNum(Item a, Item b)
 {
+  int aa, bb;
+
+  aa = *((int *)a);
+  bb = *((int *)b);
+
+  return (wt[aa] > wt[bb]);
+}
+
+int GenDijkstra(struct Graph * graph, Heap *h_, int fakeSource)
+{
+    int explored_nodes = 0;
+    Heap *h = NewHeap(MAXSIZE, LessNum);
     int *v, w, *vertecisPos = getHeapElementes_pos(h);
-    LinkedList *t;
+    struct AdjListNode* t;
+    wt = (int *)malloc(MAXSIZE * sizeof(int));
+    st = (bool *)malloc(MAXSIZE * sizeof(bool));
 
     for (int i = 0; i < graph->V; i++) {
-        v = (int *)malloc(sizeof(int));
+        v = (int *)malloc(sizeof(int)); //fazer isto fora e depois mudar só e dar os "free(v)" só no fim
         if (v == NULL)      exit(0);
         *v = i;
-        st[i] = -1;
         wt[i] = maxWT;
+        st[i] = false;
         Direct_Insert(h, (Item) v);
         vertecisPos[i] = i;
     }
 
-     wt[source] = 0;
-     FixUp(h, source);
+     wt[fakeSource] = 3;//bc of lastcost condition
+     FixUp(h, fakeSource);
 
-    for(v = RemoveMax(h); *v != destination && wt[*v] != maxWT; v = RemoveMax(h)){
-        for (t = Graph[*v]; t != NULL; t = t->next)
-            if (((node*)(t->this))->cost <= maxCost && wt[w = ((node*)(t->this))->vertex] > P){
-            wt[w] = P;
-            FixUp(h, vertecisPos[w]);
-            st[w] = *v;
+    for(v = RemoveMax(h); wt[*v] != maxWT; v = RemoveMax(h)){
+        ++ explored_nodes;
+        printf("DIJKSTRA %d\n", *v);
+        
+        st[*v] = true;
+        unsigned int lastcost = wt[*v];
+        if (lastcost == 2)
+            --lastcost;
+        for (t = graph->array[*v].head; t != NULL; t = t->next){//printf("FFFOOOORRRR   %d\n", t->dest);
+            if (!st[t->dest] && t->relation <= lastcost && wt[t->dest] > t->relation){//printf("IIIIIIFFFFFF\n");
+                wt[t->dest] = t->relation;
+                FixUp(h, vertecisPos[t->dest]);
             }
+        }
      free (v);
     }
 
     free(v);
+
+    return explored_nodes;
 }
 
 bool checkCommercialConnectedness(struct Graph* graph)

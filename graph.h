@@ -5,13 +5,15 @@
 #include <string.h>
 #include <stdbool.h>
 
-#define MAXSIZE 12//65536
+#include "heaps.h"
+
+#define MAXSIZE 65536
 
 // A structure to represent an adjacency list node 
 struct AdjListNode 
 { 
     int dest;
-    int commercialRelationship;
+    int relation;
     struct AdjListNode* next; 
 };
   
@@ -32,21 +34,25 @@ struct Graph
     int* tier1;
 };
 
-struct AdjListNode* newAdjListNode(int dest, int commercialRelationship);
+struct AdjListNode* newAdjListNode(int dest, int relation);
 
 struct Graph* createGraph(int V);
 
-void addEdge(struct Graph* graph, int src, int dest, int commercialRelationship);
+void addEdge(struct Graph* graph, int src, int dest, int relation);
 
-void printGraph(struct Graph* graph);
+int printGraph(struct Graph* graph);
 
-<<<<<<< HEAD
+
 void freeAdjList(struct AdjListNode * list);
 
 void freeGraph(struct Graph* graph);
-=======
+
 bool checkCommercialConnectedness(struct Graph* graph);
->>>>>>> 493315e4ed06721353837d663907f0fcc98ced38
+
+
+int LessNum(Item a, Item b);
+
+int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource);
 
 /* End if: Protect multiple inclusions                              */
 #endif
