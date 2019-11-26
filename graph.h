@@ -32,8 +32,8 @@ struct Graph
     int V; 
     struct AdjList* array;
     
-    int* visited;
-    int* notPermited;
+    bool* visited;
+    bool* notPermited;
     int* tier1;
 };
 
@@ -49,6 +49,10 @@ void freeAdjList(struct AdjListNode * list);
 
 void freeGraph(struct Graph* graph);
 
+
+void clearArrays(struct Graph* graph);
+
+bool DFS(struct Graph* graph, int vertex);
 
 bool checkCustomersCycles(struct Graph* graph);
 

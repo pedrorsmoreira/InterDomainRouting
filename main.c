@@ -76,20 +76,18 @@ int main(int argc, char *argv[])
 
 	struct Graph* graph = readFile(filename);
 
+	if (!checkCustomersCycles(graph))
+		printf("HAVE CUSTOMER CYCLES\n");
+
 	if (!checkCommercialConnectedness(graph))
 		printf("NOT COMMERCIAL CONNECTED\n");
 
-	
+
 	int vertexes = printGraph(graph);
 	printf("\n");
 
 	int exploredNodes = GenDijkstra(graph, NULL, 4);
-/*	for (int i =1, j=0; i <=43974; ++i)
 
-	
-
-	//int exploredNodes = GenDijkstra(graph, NULL, 4);
-*/
 	for (int i =1, j=0; i <= 100; ++i)
 		if (graph->tier1[i] > 0 && GenDijkstra(graph, NULL, i) != vertexes)
 			printf("HEEEYYYpara i=%d, já vai em %d\n", i, ++j);
