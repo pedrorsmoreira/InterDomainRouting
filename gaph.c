@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 #include "graph.h"
   
 // A utility function to create a new adjacency list node 
@@ -33,6 +32,10 @@ struct Graph* createGraph(int V)
     graph->notPermited = (bool*) malloc(V * sizeof(bool));
     graph->tier1 = (int*) malloc(V * sizeof(int));
 
+    graph->counterHops = (int*) malloc(V * sizeof(int));
+    graph->totalHops = (int*) malloc(V * sizeof(int));
+
+
     // Initialize each adjacency list as empty by  
     // making head as NULL and initialize the rest
     // of the arrays
@@ -42,6 +45,9 @@ struct Graph* createGraph(int V)
         graph->visited[i] = false;
         graph->notPermited[i] = false;
         graph->tier1[i] = 0;
+
+        graph->counterHops[i] = 0;
+        graph->totalHops[i] = 0;
     }
 
     return graph; 
@@ -72,28 +78,20 @@ void addEdge(struct Graph* graph, int src, int dest, int relation)
 
 // A utility function to print the adjacency list  
 // representation of graph 
-int printGraph(struct Graph* graph) 
+void printGraph(struct Graph* graph) 
 { 
     int v;
-    int vertexes = 0;
-    for (v = 0; v < graph->V; ++v) 
-    { 
-        struct AdjListNode* pCrawl = graph->array[v].head; 
-        //printf("\n Adjacency list of vertex %d\n head", v); 
-        if(pCrawl != NULL)
-            ++vertexes;
-
-        while (pCrawl) 
-        { 
-            //printf(" -> %d|%d", pCrawl->dest, pCrawl->relation); 
+    for (v = 0; v < graph->V; ++v) { 
+        struct AdjListNode* pCrawl = graph->array[v].head;
+        while (pCrawl) { 
+            printf(" -> %d|%d", pCrawl->dest, pCrawl->relation); 
             pCrawl = pCrawl->next; 
         } 
-        //printf("\n"); 
     }
-    return vertexes; 
 }
 
-void freeAdjList(struct AdjListNode * list){
+void freeAdjList(struct AdjListNode * list)
+{
     while (list != NULL){
         struct AdjListNode *aux = list->next;
         free(list);
@@ -101,143 +99,8 @@ void freeAdjList(struct AdjListNode * list){
     }
 }
 
-void freeGraph(struct Graph* graph){
+void freeGraph(struct Graph* graph)
+{
     for (int i = 0;  i < graph->V; ++i)
         freeAdjList(graph->array[i].head);
-}
-
-
-void clearArrays(struct Graph* graph)
-{
-    for (int i = 0; i < graph->V; i++) {
-        graph->visited[i] = false;
-        graph->notPermited[i] = false;
-    }
-}
-
-bool DFS(struct Graph* graph, int vertex)
-{
-    struct AdjListNode* aux = graph->array[vertex].head;
-
-    graph->visited[vertex] = true;
-    graph->notPermited[vertex] = true;
-
-    while(aux != NULL) {
-        if (aux->relation == 1) {
-            if (graph->notPermited[aux->dest] == true)
-                return false;
-            if (graph->visited[aux->dest] == false) {
-                if (!DFS(graph, aux->dest))
-                    return false;
-            }
-
-        }
-        aux = aux->next;
-    }
-
-    graph->notPermited[vertex] = false;
-
-    return true;
-}
-
-bool checkCustomersCycles(struct Graph* graph)
-{
-    for (int i = 0; i < MAXSIZE; i++){
-        if (graph->tier1[i] == 2) {
-            if (!DFS(graph, i))
-                return false;
-            clearArrays(graph);
-        }
-    }
-
-    return true;
-}
-
-bool checkCommercialConnectedness(struct Graph* graph)
-{
-    int flag = 0;
-    struct AdjListNode* aux = NULL;
-
-    for (int i = 0; i < MAXSIZE; i++)
-        if (graph->tier1[i] == 2)
-            for(int j = i + 1; j < MAXSIZE; j++)
-                if (graph->tier1[j] == 2) {
-                    flag = 0;
-                    aux = graph->array[i].head;
-                    while(aux != NULL) {
-                        if (aux->dest == j) {
-                            flag = 1;
-                            break;
-                        }
-                        aux = aux->next;
-                    }
-
-                    if (flag == 0)
-                        return false;
-                }
-
-    return true;
-}
-
-
-#define maxWT 0
-int* wt = NULL;
-bool* st = NULL;
-unsigned int* lastcost = NULL;
-
-int LessNum(Item a, Item b)
-{
-    int aa, bb;
-
-    aa = *((int *)a);
-    bb = *((int *)b);
-
-    return (wt[aa] < wt[bb]);
-}
-
-int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
-{
-    resetHeapElementsNr(h, MAXSIZE);
-    int explored_nodes = 0;
-
-    int *HeapPositions = getHeapElementes_pos(h);
-    int* v=NULL; 
-    struct AdjListNode* t=NULL;
-
-    for (int i = 0; i < graph->V; ++i) {
-        if (graph->tier1[i] == 0)
-            continue;
-
-        wt[i] = maxWT;
-        st[i] = false;
-        lastcost[i] = 3;
-    }
-//printf("ANTES DO FIX || fakeSource = %d ||| HeapPositions[fakeSource] = %d\n", fakeSource, HeapPositions[fakeSource]);
-     wt[fakeSource] = 3;
-     FixUp(h, HeapPositions[fakeSource]);
-//printf("ACABOU O FIX\n");
-//v = RemoveMax(h);
-//printf("valor de V é %d\n", *v);
-    for(v = RemoveMax(h); wt[*v] != maxWT; v = RemoveMax(h),
-                                            st[*v] = true, 
-                                            ++explored_nodes) {
-        //printf("\nDIJKSTRA %d wt[*v] %d\n", *v, wt[*v]);
-        //if (wt[*v] == 1){
-            ////printf("bazei\n");
-            //break;
-        //}
-
-        for (t = graph->array[*v].head; t != NULL; t = t->next) { ////printf("FFFOOOORRRR   %d\n", t->dest);
-            if (!st[t->dest] && t->relation <= lastcost[*v] && t->relation > wt[t->dest]){ ////printf("IIIIIIFFFFFF\n");
-                wt[t->dest] = t->relation;
-                lastcost[t->dest] = (t->relation == 2) ? t->relation - 1 : t->relation;
-                FixUp(h, HeapPositions[t->dest]);
-
-                //printf("wt[t->dest] é %d lastcost[t->dest] %d\n", wt[t->dest], lastcost[t->dest]);
-            }
-        }
-    }
-    //if (wt[*v] == maxWT) 
-        //printf("ZZZZZZZZZZZZZZZZZZ, %d |||| %d |||||\n", *v, fakeSource);
-    return explored_nodes;
 }

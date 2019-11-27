@@ -11,3 +11,7 @@ testar meter a função less no ficheiro heaps p ver se fica mais rapido (fazer 
 caso n seja necessário para a contagem de hops os wt[v], n preciso do lastcost, posso usar só o wt[v].
 
 o commercially connected está a dar segfault se apagar a ligação 6-7 no ficehiro exemplos.
+
+ver se há possibilidade de ver ASes que sejam 0
+
+se n for conexo, n se pode usar assim o condition na BFS.

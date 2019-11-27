@@ -9,10 +9,10 @@ debug: *.c
 	gcc -Wall -pg *.c -o InterDomainRouting-debug $(CFLAGS)
 
 run:
-	./InterDomainRouting -f LargeNetwork.txt
+	./InterDomainRouting -f files/LargeNetwork.txt
 
 run-debug:
-	./InterDomainRouting-debug -f LargeNetwork.txt; gprof InterDomainRouting-debug gmon.out > debug.txt
+	./InterDomainRouting-debug -f files/LargeNetwork.txt; gprof InterDomainRouting-debug gmon.out > debug.txt
 
 clean:
 	rm -f *.o InterDomainRouting InterDomainRouting-debug gmn.out

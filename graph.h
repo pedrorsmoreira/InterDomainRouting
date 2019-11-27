@@ -2,12 +2,9 @@
 #ifndef GRAPH
 #define GRAPH
 
-#include <string.h>
 #include <stdbool.h>
 
-#include "heaps.h"
-
-#define MAXSIZE 65536
+#include "defs.h"
 
 // A structure to represent an adjacency list node 
 struct AdjListNode 
@@ -35,6 +32,9 @@ struct Graph
     bool* visited;
     bool* notPermited;
     int* tier1;
+
+    int* counterHops;
+    int* totalHops;
 };
 
 struct AdjListNode* newAdjListNode(int dest, int relation);
@@ -43,25 +43,11 @@ struct Graph* createGraph(int V);
 
 void addEdge(struct Graph* graph, int src, int dest, int relation);
 
-int printGraph(struct Graph* graph);
+void printGraph(struct Graph* graph);
 
 void freeAdjList(struct AdjListNode * list);
 
 void freeGraph(struct Graph* graph);
-
-
-void clearArrays(struct Graph* graph);
-
-bool DFS(struct Graph* graph, int vertex);
-
-bool checkCustomersCycles(struct Graph* graph);
-
-bool checkCommercialConnectedness(struct Graph* graph);
-
-
-int LessNum(Item a, Item b);
-
-int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource);
 
 /* End if: Protect multiple inclusions                              */
 #endif

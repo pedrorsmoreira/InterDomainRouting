@@ -236,6 +236,7 @@ void FreeHeap(Heap * h)
 	free(h);
 }
 
-void resetHeapElementsNr(Heap *h, int elementsNr){
+void resetHeapElementsNr(Heap *h)
+{
 	h->n_elements = h->HeapSize;
 }
