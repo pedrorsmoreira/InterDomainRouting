@@ -215,7 +215,7 @@ void lengthShortestPaths(struct Graph* graph)
     for (i = 0; i < graph->V; ++i)
         graph->visited[i] = condition;
     
-    for (i = 0; i <= 500; ++i) {
+    for (i = 0; i <= ITERATIONS; ++i) {
     //for (int i =1; i <= MAXSIZE; ++i) {
         if (graph->tier1[i] > 0) {
             condition = BFS(graph, i, q, condition);

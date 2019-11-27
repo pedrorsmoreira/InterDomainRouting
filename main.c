@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
     printf("SETUP DONE\n");
 
 	for (int i = 0; i <= 100; ++i) {
-	//for (int i =1; i <= MAXSIZE; ++i) {
+	//for (int i =1; i <= ITERATIONS; ++i) {
 		if (graph->tier1[i] > 0)
 			// Using the -1 because we should not count with the node
 			// from where the Dijkstra is launched
@@ -136,6 +136,8 @@ int main(int argc, char *argv[])
 	printf("\n");
 
 	printf("Elapsed time: %f seconds\n\n", time_spent);
+
+	printf("Elapsed time in minutes would be in total (est) = %d\n", ((MAXSIZE*time_spent)/INTERATIONS)/60);
 
 	return 0;  
 }
