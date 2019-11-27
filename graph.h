@@ -16,8 +16,10 @@ struct AdjListNode
   
 // A structure to represent an adjacency list 
 struct AdjList 
-{ 
-    struct AdjListNode* head; 
+{
+    struct AdjListNode* providers;
+    struct AdjListNode* peers;
+    struct AdjListNode* customers;
 }; 
   
 // A structure to represent a graph. A graph 

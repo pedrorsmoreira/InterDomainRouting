@@ -25,7 +25,7 @@ struct _heap
 	int HeapSize;                 /* max HeapSize of the heap. */
 	Item *heapdata;           /* An array of Items. */
 #ifdef WMspecs
-	int *elements_pos;        /* An array holding the elements position in the heapdata*/
+	int* elements_pos;        /* An array holding the elements position in the heapdata*/
 #endif
 };
 
@@ -41,7 +41,7 @@ struct _heap
  *
  *****************************************************************************/
 
-Heap *NewHeap(int HeapSize, int GraphSize, int (*less) (Item, Item))
+Heap* NewHeap(int HeapSize, int GraphSize, int (*less) (Item, Item))
 {
 	Heap *h;
 
@@ -62,7 +62,7 @@ Heap *NewHeap(int HeapSize, int GraphSize, int (*less) (Item, Item))
 }
 
 #ifdef WMspecs
-int *getHeapElementes_pos(Heap *h)
+int* getHeapElementes_pos(Heap *h)
 {
 	return h->elements_pos;
 }

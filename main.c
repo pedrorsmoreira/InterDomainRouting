@@ -60,8 +60,6 @@ int main(int argc, char *argv[])
 
 	/********** DIJKSTRA **********/
 
-	/*
-
 	int ASesNumber = 0;
 	for (int i = 0; i < graph->V; ++i)
 		if (graph->tier1[i] > 0)
@@ -92,17 +90,19 @@ int main(int argc, char *argv[])
 
     printf("SETUP DONE\n");
 
-	for (int i = 0; i <= 100; ++i) {
-	//for (int i =1; i <= ITERATIONS; ++i) {
-		if (graph->tier1[i] > 0)
+
+	//for (int i = 0; i <= 100; ++i) {
+	for (int i =1; i <= ITERATIONS; ++i) {
+		if (graph->tier1[i] > 0){
 			// Using the -1 because we should not count with the node
 			// from where the Dijkstra is launched
 			providers += ASesNumber - 1 - GenDijkstra(graph, h, i);
+
+			printf("\n----------------------\n");
+		}
 	}
 
-	*/
-
-	lengthShortestPaths(graph);
+	//lengthShortestPaths(graph);
 
 	clock_t end = clock();
 	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;

@@ -48,6 +48,7 @@ struct Graph* readFile(char* filename)
 }
 
 
+
 void clearArrays(struct Graph* graph)
 {
     for (int i = 0; i < graph->V; i++) {
@@ -58,21 +59,17 @@ void clearArrays(struct Graph* graph)
 
 bool DFS(struct Graph* graph, int vertex)
 {
-    struct AdjListNode* aux = graph->array[vertex].head;
+    struct AdjListNode* aux = graph->array[vertex].customers;
 
     graph->visited[vertex] = true;
     graph->notPermited[vertex] = true;
 
     while(aux != NULL) {
-        if (aux->relation == 1) {
-            if (graph->notPermited[aux->dest] == true)
+        if (graph->notPermited[aux->dest])
+            return false;
+        if (!graph->visited[aux->dest]) 
+            if (!DFS(graph, aux->dest))
                 return false;
-            if (graph->visited[aux->dest] == false) {
-                if (!DFS(graph, aux->dest))
-                    return false;
-            }
-
-        }
         aux = aux->next;
     }
 
@@ -94,6 +91,8 @@ bool checkCustomersCycles(struct Graph* graph)
     return true;
 }
 
+
+
 bool checkCommercialConnectedness(struct Graph* graph)
 {
     int flag = 0;
@@ -104,7 +103,7 @@ bool checkCommercialConnectedness(struct Graph* graph)
             for(int j = i + 1; j < MAXSIZE; j++)
                 if (graph->tier1[j] == 2) {
                     flag = 0;
-                    aux = graph->array[i].head;
+                    aux = graph->array[i].peers;
                     while(aux != NULL) {
                         if (aux->dest == j) {
                             flag = 1;
@@ -128,6 +127,21 @@ int LessNum(Item a, Item b)
     bb = *((int *)b);
 
     return (wt[aa] < wt[bb]);
+}
+
+void scanList(Heap *h, int* HeapPositions, struct AdjListNode* aux)
+{
+    while(aux) {
+        if (!st[aux->dest] && aux->relation > wt[aux->dest]) {
+            wt[aux->dest] = aux->relation;
+            lastcost[aux->dest] = aux->relation;
+            FixUp(h, HeapPositions[aux->dest]);
+
+            //printf("aux->dest é %d wt[aux->dest] é %d lastcost[aux->dest] %d\n", aux->dest, wt[aux->dest], lastcost[aux->dest]);
+        }
+
+        aux = aux->next;
+    }
 }
 
 int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
@@ -163,18 +177,30 @@ int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
             ++explored_nodes;
         }
 
-        for (t = graph->array[*v].head; t != NULL; t = t->next) {
-            if (!st[t->dest] && t->relation <= lastcost[*v] && t->relation > wt[t->dest]){
-                wt[t->dest] = t->relation;
-                lastcost[t->dest] = (t->relation == 2) ? t->relation - 1 : t->relation;
-                FixUp(h, HeapPositions[t->dest]);
+        //printf("\nBeing Explored %d\n", *v);
 
-                //printf("t->dest é %d wt[t->dest] é %d lastcost[t->dest] %d\n", t->dest, wt[t->dest], lastcost[t->dest]);
-            }
+        if (lastcost[*v] == 3) {
+            scanList(h, HeapPositions, graph->array[*v].providers);
+            scanList(h, HeapPositions, graph->array[*v].peers);
         }
+        scanList(h, HeapPositions, graph->array[*v].customers);
     }
 
     return explored_nodes;
+}
+
+void scanListBFS(struct Graph* graph, struct queue* q, struct AdjListNode* aux, bool condition, int currentVertex)
+{
+    while(aux) {
+        if(graph->visited[aux->dest] == condition) {
+            graph->visited[aux->dest] = !condition;
+            pushQueue(q, aux->dest);
+
+            graph->counterHops[aux->dest] = graph->counterHops[currentVertex] + 1;
+            ++graph->totalHops[graph->counterHops[aux->dest]];
+        }
+        aux = aux->next;
+    }
 }
 
 
@@ -190,17 +216,9 @@ bool BFS(struct Graph* graph, int startVertex, struct queue* q, bool condition)
         int currentVertex = popQueue(q);
         //printf("Visited %d\ngraph->counterHops[currentVertex] %d\n", currentVertex, graph->counterHops[currentVertex]);
 
-        struct AdjListNode* aux = graph->array[currentVertex].head;
-        while(aux) {
-            if(graph->visited[aux->dest] == condition) {
-                graph->visited[aux->dest] = !condition;
-                pushQueue(q, aux->dest);
-
-                graph->counterHops[aux->dest] = graph->counterHops[currentVertex] + 1;
-                ++graph->totalHops[graph->counterHops[aux->dest]];
-            }
-            aux = aux->next;
-       }
+        scanListBFS(graph, q, graph->array[currentVertex].providers,   condition, currentVertex);
+        scanListBFS(graph, q, graph->array[currentVertex].peers,       condition, currentVertex);
+        scanListBFS(graph, q, graph->array[currentVertex].customers,   condition, currentVertex);
     }
 
     return !condition;

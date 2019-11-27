@@ -41,7 +41,10 @@ struct Graph* createGraph(int V)
     // of the arrays
     int i; 
     for (i = 0; i < V; ++i) {
-        graph->array[i].head = NULL;
+        graph->array[i].providers = NULL;
+        graph->array[i].peers = NULL;
+        graph->array[i].customers = NULL;
+
         graph->visited[i] = false;
         graph->notPermited[i] = false;
         graph->tier1[i] = 0;
@@ -57,36 +60,64 @@ struct Graph* createGraph(int V)
 void addEdge(struct Graph* graph, int src, int dest, int relation) 
 {
     if (src >= MAXSIZE || dest >= MAXSIZE) {
-        //printf("Invalid values in the input file\n");
+        printf("Invalid values in the input file\n");
         exit(1);
     }
 
+    // Add an edge from src to dest. A new node is added 
+    // to the corresponding adjacency list of src according
+    // to the relation. The node is added at the begining
+    struct AdjListNode* newNode = newAdjListNode(dest, relation); 
+
     // If this happen is not an AS of Tier-1
-    if (relation == 3)
-        graph->tier1[src] = 1;
-    else
+    if (relation == 3) {
+        newNode->next = graph->array[src].providers; 
+        graph->array[src].providers = newNode;
+
+        graph->tier1[src] = 1;    
+    } else {
+        if (relation == 2) {
+            newNode->next = graph->array[src].peers;
+            graph->array[src].peers = newNode;
+        } else {
+            newNode->next = graph->array[src].customers;
+            graph->array[src].customers = newNode;
+        }
         if (graph->tier1[src] == 0)
             graph->tier1[src] = 2;
-
-    // Add an edge from src to dest.  A new node is  
-    // added to the adjacency list of src.  The node 
-    // is added at the begining 
-    struct AdjListNode* newNode = newAdjListNode(dest, relation); 
-    newNode->next = graph->array[src].head; 
-    graph->array[src].head = newNode;
+    }
 } 
 
 // A utility function to print the adjacency list  
 // representation of graph 
 void printGraph(struct Graph* graph) 
 { 
+    struct AdjListNode* pCrawl = NULL;
+
     int v;
-    for (v = 0; v < graph->V; ++v) { 
-        struct AdjListNode* pCrawl = graph->array[v].head;
+    for (v = 0; v < ITERATIONS; ++v) {
+        printf("\n\n--------------------\nVERTEX: %d\n\n", v);
+
+        printf("providers\n");
+        pCrawl = graph->array[v].providers;
         while (pCrawl) { 
             printf(" -> %d|%d", pCrawl->dest, pCrawl->relation); 
             pCrawl = pCrawl->next; 
-        } 
+        }
+
+        printf("\npeers\n");
+        pCrawl = graph->array[v].peers;
+        while (pCrawl) { 
+            printf(" -> %d|%d", pCrawl->dest, pCrawl->relation); 
+            pCrawl = pCrawl->next; 
+        }
+
+        printf("\ncustomers\n");
+        pCrawl = graph->array[v].customers;
+        while (pCrawl) { 
+            printf(" -> %d|%d", pCrawl->dest, pCrawl->relation); 
+            pCrawl = pCrawl->next; 
+        }
     }
 }
 
@@ -101,6 +132,9 @@ void freeAdjList(struct AdjListNode * list)
 
 void freeGraph(struct Graph* graph)
 {
-    for (int i = 0;  i < graph->V; ++i)
-        freeAdjList(graph->array[i].head);
+    for (int i = 0;  i < graph->V; ++i) {
+        freeAdjList(graph->array[i].providers);
+        freeAdjList(graph->array[i].peers);
+        freeAdjList(graph->array[i].customers);
+    }
 }
