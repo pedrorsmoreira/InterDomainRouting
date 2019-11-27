@@ -137,7 +137,7 @@ int main(int argc, char *argv[])
 
 	printf("Elapsed time: %f seconds\n\n", time_spent);
 
-	printf("Elapsed time in minutes would be in total (est) = %d\n", ((MAXSIZE*time_spent)/ITERATIONS)/60);
+	printf("Elapsed time in minutes would be in total (est) = %f\n", ((double)(MAXSIZE*time_spent)/ITERATIONS)/60);
 
 	return 0;  
 }
