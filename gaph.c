@@ -4,7 +4,13 @@
 
 #include "graph.h"
 
-extern int counter;
+extern int providers;
+extern int peers;
+extern int customers;
+
+int* wt = NULL;
+bool* st = NULL;
+unsigned int* lastcost = NULL;
   
 // A utility function to create a new adjacency list node 
 struct AdjListNode* newAdjListNode(int dest, int relation) 
@@ -74,28 +80,20 @@ void addEdge(struct Graph* graph, int src, int dest, int relation)
 
 // A utility function to print the adjacency list  
 // representation of graph 
-int printGraph(struct Graph* graph) 
+void printGraph(struct Graph* graph) 
 { 
     int v;
-    int vertexes = 0;
-    for (v = 0; v < graph->V; ++v) 
-    { 
-        struct AdjListNode* pCrawl = graph->array[v].head; 
-        //printf("\n Adjacency list of vertex %d\n head", v); 
-        if(pCrawl != NULL)
-            ++vertexes;
-
-        while (pCrawl) 
-        { 
-            //printf(" -> %d|%d", pCrawl->dest, pCrawl->relation); 
+    for (v = 0; v < graph->V; ++v) { 
+        struct AdjListNode* pCrawl = graph->array[v].head;
+        while (pCrawl) { 
+            printf(" -> %d|%d", pCrawl->dest, pCrawl->relation); 
             pCrawl = pCrawl->next; 
         } 
-        //printf("\n"); 
     }
-    return vertexes; 
 }
 
-void freeAdjList(struct AdjListNode * list){
+void freeAdjList(struct AdjListNode * list)
+{
     while (list != NULL){
         struct AdjListNode *aux = list->next;
         free(list);
@@ -103,9 +101,45 @@ void freeAdjList(struct AdjListNode * list){
     }
 }
 
-void freeGraph(struct Graph* graph){
+void freeGraph(struct Graph* graph)
+{
     for (int i = 0;  i < graph->V; ++i)
         freeAdjList(graph->array[i].head);
+}
+
+struct Graph* readFile(char* filename)
+{
+    FILE *fp = fopen (filename, "r");
+    if (fp == NULL) {
+        perror (filename);
+        exit(1);
+    }
+
+    // APAGUEI O +1 - CONFIRMAR QUE NAO HA STRESS
+    //the 1 added to MAXSIZE is for a bug correction in the dijkstra main cicle (this way the heap will always have a node with maxWT)
+    struct Graph* graph = createGraph(MAXSIZE);
+
+    char line[128]; /* maximum line size */
+
+    // read a line
+    while (fgets (line, sizeof line, fp) != NULL) { 
+        char *token  = strtok (line, " "); // Returns first token
+        char *token2 = strtok (NULL, " "); // Returns second token
+        char *token3 = strtok (NULL, " "); // Returns third token
+
+        //printf("%d %d %d\n", atoi(token), atoi(token2), atoi(token3));
+
+        if ((token == NULL) && (token2 == NULL) && (token3 == NULL)) {
+            printf("Input file in the wrong structure\n");
+            exit(1);
+        }
+
+        addEdge(graph, atoi(token), atoi(token2), atoi(token3)); 
+    }
+
+    fclose (fp);
+
+    return graph;
 }
 
 
@@ -181,12 +215,6 @@ bool checkCommercialConnectedness(struct Graph* graph)
     return true;
 }
 
-
-#define maxWT 0
-int* wt = NULL;
-bool* st = NULL;
-unsigned int* lastcost = NULL;
-
 int LessNum(Item a, Item b)
 {
     int aa, bb;
@@ -194,14 +222,12 @@ int LessNum(Item a, Item b)
     aa = *((int *)a);
     bb = *((int *)b);
 
-    ++counter;
-
     return (wt[aa] < wt[bb]);
 }
 
 int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
-{   
-    resetHeapElementsNr(h, MAXSIZE);
+{
+    resetHeapElementsNr(h);
     int explored_nodes = 0;
 
     int* HeapPositions = getHeapElementes_pos(h);
@@ -212,25 +238,28 @@ int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
         if (graph->tier1[i] == 0)
             continue;
 
-        wt[i] = maxWT;
+        wt[i] = minWT;
         st[i] = false;
         lastcost[i] = 3;
     }
 
-     wt[fakeSource] = 3;
-     FixUp(h, HeapPositions[fakeSource]);
+    wt[fakeSource] = 3;
+    FixUp(h, HeapPositions[fakeSource]);
 
-    for(v = RemoveMax(h); wt[*v] != maxWT; v = RemoveMax(h),
-                                            st[*v] = true, 
-                                            ++explored_nodes) {
-        //printf("\nDIJKSTRA %d wt[*v] %d\n", *v, wt[*v]);
-        //if (wt[*v] == 1){
-            ////printf("bazei\n");
-        //    break;
-        //}
+    for(v = RemoveMax(h); wt[*v] != minWT; v = RemoveMax(h), st[*v] = true) {
+        if (*v != fakeSource) {
+            if (wt[*v] == 1)
+                break;
+            else if (wt[*v] == 2)
+                ++peers;
+            else
+                ++customers;
 
-        for (t = graph->array[*v].head; t != NULL; t = t->next) { ////printf("FFFOOOORRRR   %d\n", t->dest);
-            if (!st[t->dest] && t->relation <= lastcost[*v] && t->relation > wt[t->dest]){ ////printf("IIIIIIFFFFFF\n");
+            ++explored_nodes;
+        }
+
+        for (t = graph->array[*v].head; t != NULL; t = t->next) {
+            if (!st[t->dest] && t->relation <= lastcost[*v] && t->relation > wt[t->dest]){
                 wt[t->dest] = t->relation;
                 lastcost[t->dest] = (t->relation == 2) ? t->relation - 1 : t->relation;
                 FixUp(h, HeapPositions[t->dest]);
@@ -239,7 +268,6 @@ int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
             }
         }
     }
-    //if (wt[*v] == maxWT) 
-        //printf("ZZZZZZZZZZZZZZZZZZ, %d |||| %d |||||\n", *v, fakeSource);
+
     return explored_nodes;
 }

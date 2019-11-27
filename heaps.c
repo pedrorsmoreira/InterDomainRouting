@@ -22,7 +22,7 @@ struct _heap
 {
 	int (*less) (Item, Item); /* this field is a function pointer to elements in the heap. */
 	int n_elements;           /* # elements in heap. */
-	int size;                 /* max size of the heap. */
+	int HeapSize;                 /* max HeapSize of the heap. */
 	Item *heapdata;           /* An array of Items. */
 #ifdef WMspecs
 	int *elements_pos;        /* An array holding the elements position in the heapdata*/
@@ -32,16 +32,16 @@ struct _heap
 /******************************************************************************
  * NewHeap()
  *
- * Arguments: size - heap size
+ * Arguments: HeapSize - heap HeapSize
  *            less - item comparison function
  * Returns: Heap
  * Side-Effects: none
  *
- * Description: allocates space for a new heap of specified size
+ * Description: allocates space for a new heap of specified HeapSize
  *
  *****************************************************************************/
 
-Heap *NewHeap(int size, int (*less) (Item, Item))
+Heap *NewHeap(int HeapSize, int GraphSize, int (*less) (Item, Item))
 {
 	Heap *h;
 
@@ -50,11 +50,11 @@ Heap *NewHeap(int size, int (*less) (Item, Item))
 
 	h->n_elements = 0;
 	h->less = less;
-	h->size = size;
-	h->heapdata = (Item *) malloc(size * sizeof(Item));
+	h->HeapSize = HeapSize;
+	h->heapdata = (Item *) malloc(HeapSize * sizeof(Item));
 	if (h->heapdata == ((Item *) NULL)) exit(0);
 #ifdef WMspecs
-	h->elements_pos = (int *) malloc(size * sizeof(int));
+	h->elements_pos = (int *) malloc(GraphSize * sizeof(int));
 	if (h->elements_pos == NULL) exit(0);
 #endif
 
@@ -190,7 +190,7 @@ Item RemoveMax(Heap * h)
 
 int Direct_Insert(Heap * h, Item element)
 {
-	if (h->n_elements == h->size) return 0;
+	if (h->n_elements == h->HeapSize) return 0;
 
 	h->heapdata[h->n_elements++] = element;
 
@@ -236,6 +236,8 @@ void FreeHeap(Heap * h)
 	free(h);
 }
 
-void resetHeapElementsNr(Heap *h, int elementsNr){
-	h->n_elements = elementsNr;
+void resetHeapElementsNr(Heap *h){
+
+	printf("h->HeapSize %d h->n_elements %d\n", h->HeapSize, h->n_elements);
+	h->n_elements = h->HeapSize;
 }

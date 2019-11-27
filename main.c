@@ -1,56 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
-
+#include <float.h>
 
 #include <time.h>
 
 #include "graph.h"
 
-int counter = 0;
-
 void print_usage(char*);
 
-struct Graph* readFile(char* filename)
-{
-	FILE *fp = fopen (filename, "r");
-	if (fp == NULL) {
-		perror (filename);
-		exit(1);
-	}
-
-	// APAGUEI O +1 - CONFIRMAR QUE NAO HA STRESS
-	//the 1 added to MAXSIZE is for a bug correction in the dijkstra main cicle (this way the heap will always have a node with maxWT)
-	struct Graph* graph = createGraph(MAXSIZE);
-
-	char line[128]; /* maximum line size */
-
-	// read a line
-	while (fgets (line, sizeof line, fp) != NULL) { 
-		char *token  = strtok (line, " "); // Returns first token
-		char *token2 = strtok (NULL, " "); // Returns second token
-		char *token3 = strtok (NULL, " "); // Returns third token
-
-		//printf("%d %d %d\n", atoi(token), atoi(token2), atoi(token3));
-
-		if ((token == NULL) && (token2 == NULL) && (token3 == NULL)) {
-			printf("Input file in the wrong structure\n");
-			exit(1);
-		}
-
-		addEdge(graph, atoi(token), atoi(token2), atoi(token3)); 
-	}
-
-	fclose (fp);
-
-	return graph;
-}
-
-
-
-
-
-#include <float.h>
+int providers = 0;
+int peers = 0;
+int customers = 0;
 
 const double lowest_double = DBL_MIN;
 
@@ -83,7 +44,7 @@ int main(int argc, char *argv[])
 
 	clock_t begin = clock();
 
-
+	/********** CREATE GRAPH AND CHECKING OF PROPERTIES **********/
 
 	struct Graph* graph = readFile(filename);
 
@@ -93,58 +54,79 @@ int main(int argc, char *argv[])
 	if (!checkCommercialConnectedness(graph))
 		printf("NOT COMMERCIAL CONNECTED\n");
 
+	//printGraph(graph);
+	//printf("\n");
 
-	int vertexes = printGraph(graph);
-	printf("\n");
+	/********** DIJKSTRA **********/
 
+	int ASesNumber = 0;
+	for (int i = 0; i < graph->V; ++i)
+		if (graph->tier1[i] > 0)
+            ++ASesNumber;
 
-	//GET READY FOR DIJKSTRA
 	wt = (int *) malloc(MAXSIZE * sizeof(int));
     st = (bool *) malloc(MAXSIZE * sizeof(bool));
     lastcost = (unsigned int *) malloc(MAXSIZE * sizeof(unsigned int));
 	
-	Heap* h = NewHeap(MAXSIZE, LessNum);
-	int *vertecisPos = getHeapElementes_pos(h);
+	// The 1 added to ASesNumber is for a bug correction 
+	// in the dijkstra main cicle (this way the heap will 
+	// always have a node with maxWT)
+	Heap* h = NewHeap(ASesNumber + 1, MAXSIZE, LessNum);
+	int* HeapPositions = getHeapElementes_pos(h);
 
-	for (int i = 0; i < graph->V; ++i) {
-		wt[i] = 0;
-        st[i] = false;
-
-        int* v = (int *) malloc(sizeof(int)); //fazer isto fora e depois mudar só e dar os "free(v)" só no fim
-        if (v == NULL) printf("failed malloc\n");
+	for (int i = 0, j = 0; i < graph->V; ++i) {
+		if (graph->tier1[i] == 0 && i > 0){
+			HeapPositions[i] = i;
+            continue;
+        }
+        int* v = (int *) malloc(sizeof(int));
+        if (v == NULL) exit(0);
         
         *v = i;
         Direct_Insert(h, (Item) v);
-        vertecisPos[i] = i;
+        HeapPositions[i] = j++;
     }
-    //READY FOR DIJKSTRA
 
-    int exploredtotal = 0;
-	for (int i =1, j=0; i <= 100; ++i) {
-	//for (int i =1, j=0; i <= MAXSIZE; ++i) {
+    printf("SETUP DONE\n");
+
+	for (int i =0; i <= 100; ++i) {
+	//for (int i =1; i <= MAXSIZE; ++i) {
 		if (graph->tier1[i] > 0)
-			exploredtotal+=GenDijkstra(graph, h, i);
-			//printf("------------DIJKSTRA%d\n", GenDijkstra(graph, h, i));
-
-		//printf("\ni: %d\n", i);
+			// Using the -1 because we should not count with the node
+			// from where the Dijkstra is launched
+			providers += ASesNumber - 1 - GenDijkstra(graph, h, i);
 	}
-
-	printf("\nCOUNTER: %d\n", counter);
-	
-	//free memory alloced for dijkstra
-	free(wt); free(st);
-	free(lastcost);
-	FreeHeap(h);
 
 	clock_t end = clock();
 	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
-	printf("Elapsed time: %f seconds\n\n", time_spent);
-	printf("There are %d ASes\n", vertexes);
-	//printf("Dijkstra explored %d nodes\n\n", exploredNodes);
-	printf("Dijkstra explored %d nodes\n\n", exploredtotal);
+	/********** FREE MEMORY **********/
 
+	free(wt); free(st);
+	free(lastcost);
+	FreeHeap(h);
 	freeGraph(graph);
+
+	/********** PRINTS **********/
+
+	printf("\n");
+	
+	printf("total ASes: %d\n", ASesNumber);
+	printf("providers: %d\n", providers);
+	printf("peers: %d\n", peers);
+	printf("customers: %d\n", customers);
+	int totalRoutes = providers + peers + customers;
+	printf("total routes: %d\n", totalRoutes);
+
+	printf("\n");
+
+	printf("providers route: %f\n", ((double)providers/totalRoutes)*100);
+	printf("peers route: %f\n", ((double)peers/totalRoutes)*100);
+	printf("customers route: %f\n", ((double)customers/totalRoutes)*100);
+
+	printf("\n");
+
+	printf("Elapsed time: %f seconds\n\n", time_spent);
 
 	return 0;  
 }

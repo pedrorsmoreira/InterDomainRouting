@@ -8,6 +8,7 @@
 #include "heaps.h"
 
 #define MAXSIZE 65536
+#define minWT 0
 
 // A structure to represent an adjacency list node 
 struct AdjListNode 
@@ -43,12 +44,14 @@ struct Graph* createGraph(int V);
 
 void addEdge(struct Graph* graph, int src, int dest, int relation);
 
-int printGraph(struct Graph* graph);
+void printGraph(struct Graph* graph);
 
 void freeAdjList(struct AdjListNode * list);
 
 void freeGraph(struct Graph* graph);
 
+
+struct Graph* readFile(char* filename);
 
 void clearArrays(struct Graph* graph);
 
