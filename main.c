@@ -102,6 +102,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
+
 	clock_t end = clock();
 	double time_spent1 = (double)(end - begin) / CLOCKS_PER_SEC;
 
