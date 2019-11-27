@@ -6,6 +6,7 @@
 #include <time.h>
 
 #include "graph.h"
+#include "api.h"
 
 void print_usage(char*);
 
@@ -59,6 +60,8 @@ int main(int argc, char *argv[])
 
 	/********** DIJKSTRA **********/
 
+	/*
+
 	int ASesNumber = 0;
 	for (int i = 0; i < graph->V; ++i)
 		if (graph->tier1[i] > 0)
@@ -89,7 +92,7 @@ int main(int argc, char *argv[])
 
     printf("SETUP DONE\n");
 
-	for (int i =0; i <= 100; ++i) {
+	for (int i = 0; i <= 100; ++i) {
 	//for (int i =1; i <= MAXSIZE; ++i) {
 		if (graph->tier1[i] > 0)
 			// Using the -1 because we should not count with the node
@@ -97,21 +100,27 @@ int main(int argc, char *argv[])
 			providers += ASesNumber - 1 - GenDijkstra(graph, h, i);
 	}
 
+	*/
+
+	lengthShortestPaths(graph);
+
 	clock_t end = clock();
 	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
 	/********** FREE MEMORY **********/
 
+	/*
 	free(wt); free(st);
 	free(lastcost);
 	FreeHeap(h);
 	freeGraph(graph);
+	*/
 
 	/********** PRINTS **********/
 
 	printf("\n");
 	
-	printf("total ASes: %d\n", ASesNumber);
+	//printf("total ASes: %d\n", ASesNumber);
 	printf("providers: %d\n", providers);
 	printf("peers: %d\n", peers);
 	printf("customers: %d\n", customers);

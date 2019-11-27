@@ -11,6 +11,7 @@
 #ifndef defsHeader
 #define defsHeader
 
+#define MAXSIZE 65536
 
 /************************************************
  *  Data type: Item
@@ -18,8 +19,6 @@
  *  Description: Pointer to void.
  ************************************************/
 typedef void * Item;
-
-
 
 /* End if: Protect multiple inclusions                              */
 #endif

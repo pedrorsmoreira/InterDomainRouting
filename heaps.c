@@ -236,8 +236,7 @@ void FreeHeap(Heap * h)
 	free(h);
 }
 
-void resetHeapElementsNr(Heap *h){
-
-	printf("h->HeapSize %d h->n_elements %d\n", h->HeapSize, h->n_elements);
+void resetHeapElementsNr(Heap *h)
+{
 	h->n_elements = h->HeapSize;
 }
