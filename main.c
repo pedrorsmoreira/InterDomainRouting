@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
-#include <float.h>
 
 #include <time.h>
 
@@ -12,17 +11,16 @@ void print_usage(char*);
 
 int providers = 0;
 int peers = 0;
-int customers = 0;
+int customers = -1;
 
-const double lowest_double = DBL_MIN;
 
 extern int *wt;
 extern bool *st;
-extern unsigned int *lastcost;
+extern int * prevHops;
+extern int *lastcost;
 
 int main(int argc, char *argv[]) 
 { 
-	printf("lowest_double %lf\n", lowest_double);
 
 	int opt;
 	char* filename = NULL;
@@ -67,7 +65,8 @@ int main(int argc, char *argv[])
 
 	wt = (int *) malloc(MAXSIZE * sizeof(int));
     st = (bool *) malloc(MAXSIZE * sizeof(bool));
-    lastcost = (unsigned int *) malloc(MAXSIZE * sizeof(unsigned int));
+    prevHops = (int *) malloc(MAXSIZE * sizeof(int));
+    lastcost = (int *) malloc(MAXSIZE * sizeof(int));
 	
 	// The 1 added to ASesNumber is for a bug correction 
 	// in the dijkstra main cicle (this way the heap will 
@@ -91,14 +90,15 @@ int main(int argc, char *argv[])
     printf("SETUP DONE\n");
 
 
-	//for (int i = 0; i <= 100; ++i) {
+	//for (int i = MAXSIZE; i >= MAXSIZE-ITERATIONS; --i) {
 	for (int i =1; i <= ITERATIONS; ++i) {
 		if (graph->tier1[i] > 0){
+			GenDijkstra(graph, h, i);
 			// Using the -1 because we should not count with the node
 			// from where the Dijkstra is launched
-			providers += ASesNumber - 1 - GenDijkstra(graph, h, i);
+			//providers += ASesNumber - 1 - GenDijkstra(graph, h, i);
 
-			printf("\n----------------------\n");
+			//printf("\n----------------------\n");
 		}
 	}
 

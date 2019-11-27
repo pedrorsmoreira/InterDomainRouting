@@ -70,13 +70,13 @@ void addEdge(struct Graph* graph, int src, int dest, int relation)
     struct AdjListNode* newNode = newAdjListNode(dest, relation); 
 
     // If this happen is not an AS of Tier-1
-    if (relation == 3) {
+    if (relation == 3*MAXSIZE) {
         newNode->next = graph->array[src].providers; 
         graph->array[src].providers = newNode;
 
         graph->tier1[src] = 1;    
     } else {
-        if (relation == 2) {
+        if (relation == 2*MAXSIZE) {
             newNode->next = graph->array[src].peers;
             graph->array[src].peers = newNode;
         } else {

@@ -10,7 +10,8 @@ extern int customers;
 
 int* wt = NULL;
 bool* st = NULL;
-unsigned int* lastcost = NULL;
+int * prevHops = NULL;
+int* lastcost = NULL;
 
 struct Graph* readFile(char* filename)
 {
@@ -39,7 +40,7 @@ struct Graph* readFile(char* filename)
             exit(1);
         }
 
-        addEdge(graph, atoi(token), atoi(token2), atoi(token3)); 
+        addEdge(graph, atoi(token), atoi(token2), MAXSIZE*atoi(token3)); 
     }
 
     fclose (fp);
@@ -126,13 +127,14 @@ int LessNum(Item a, Item b)
     aa = *((int *)a);
     bb = *((int *)b);
 
-    return (wt[aa] < wt[bb]);
+    return ((wt[aa] - prevHops[aa]) < (wt[bb] - prevHops[bb]));
 }
 
-void scanList(Heap *h, int* HeapPositions, struct AdjListNode* aux)
+void scanList(Heap *h, int* HeapPositions, struct AdjListNode* aux, int source)
 {
     while(aux) {
-        if (!st[aux->dest] && aux->relation > wt[aux->dest]) {
+        if (!st[aux->dest] && aux->relation + prevHops[source] + 1 > wt[aux->dest] + prevHops[aux->dest]) {
+            prevHops[aux->dest] = prevHops[source] + 1;
             wt[aux->dest] = aux->relation;
             lastcost[aux->dest] = aux->relation;
             FixUp(h, HeapPositions[aux->dest]);
@@ -144,10 +146,9 @@ void scanList(Heap *h, int* HeapPositions, struct AdjListNode* aux)
     }
 }
 
-int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
+void GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
 {
     resetHeapElementsNr(h);
-    int explored_nodes = 0;
 
     int* HeapPositions = getHeapElementes_pos(h);
     int* v = NULL; 
@@ -157,36 +158,31 @@ int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
         if (graph->tier1[i] == 0)
             continue;
 
-        wt[i] = minWT;
+        wt[i] = minWT*MAXSIZE;
         st[i] = false;
-        lastcost[i] = 3;
+        prevHops[i] = 0;
+        lastcost[i] = 3*MAXSIZE;
     }
 
-    wt[fakeSource] = 3;
+    wt[fakeSource] = 3*MAXSIZE;
     FixUp(h, HeapPositions[fakeSource]);
 
     for(v = RemoveMax(h); wt[*v] != minWT; v = RemoveMax(h), st[*v] = true) {
-        if (*v != fakeSource) {
-            if (wt[*v] == 1)
-                break;
-            else if (wt[*v] == 2)
-                ++peers;
-            else
-                ++customers;
-
-            ++explored_nodes;
-        }
+        if (wt[*v] == 1*MAXSIZE)
+            ++providers;
+        else if (wt[*v] == 2*MAXSIZE)
+            ++peers;
+        else
+            ++customers;
 
         //printf("\nBeing Explored %d\n", *v);
 
-        if (lastcost[*v] == 3) {
-            scanList(h, HeapPositions, graph->array[*v].providers);
-            scanList(h, HeapPositions, graph->array[*v].peers);
+        if (lastcost[*v] == 3*MAXSIZE) {
+            scanList(h, HeapPositions, graph->array[*v].providers, *v);
+            scanList(h, HeapPositions, graph->array[*v].peers, *v);
         }
-        scanList(h, HeapPositions, graph->array[*v].customers);
+        scanList(h, HeapPositions, graph->array[*v].customers, *v);
     }
-
-    return explored_nodes;
 }
 
 void scanListBFS(struct Graph* graph, struct queue* q, struct AdjListNode* aux, bool condition, int currentVertex)

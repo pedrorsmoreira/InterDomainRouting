@@ -21,9 +21,9 @@ bool checkCommercialConnectedness(struct Graph* graph);
 
 int LessNum(Item a, Item b);
 
-void scanList(Heap *h, int* HeapPositions, struct AdjListNode* aux);
+void scanList(Heap *h, int* HeapPositions, struct AdjListNode* aux, int source);
 
-int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource);
+void GenDijkstra(struct Graph * graph, Heap *h, int fakeSource);
 
 
 void scanListBFS(struct Graph* graph, struct queue* q, struct AdjListNode* aux, bool condition, int currentVertex);
