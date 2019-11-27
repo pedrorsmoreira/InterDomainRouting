@@ -124,7 +124,7 @@ int main(int argc, char *argv[])
     //READY FOR DIJKSTRA
 
     int exploredtotal = 0;
-	for (int i =1, j=0; i <= 500; ++i) {
+	for (int i =1, j=0; i <= 100; ++i) {
 	//for (int i =1, j=0; i <= MAXSIZE; ++i) {
 		if (graph->tier1[i] > 0)
 			exploredtotal+=GenDijkstra(graph, h, i);
