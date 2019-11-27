@@ -7,6 +7,8 @@
 
 #include "graph.h"
 
+int counter = 0;
+
 void print_usage(char*);
 
 struct Graph* readFile(char* filename)
@@ -92,8 +94,8 @@ int main(int argc, char *argv[])
 		printf("NOT COMMERCIAL CONNECTED\n");
 
 
-	//int vertexes = printGraph(graph);
-	//printf("\n");
+	int vertexes = printGraph(graph);
+	printf("\n");
 
 
 	//GET READY FOR DIJKSTRA
@@ -105,8 +107,11 @@ int main(int argc, char *argv[])
 	int *vertecisPos = getHeapElementes_pos(h);
 
 	for (int i = 0; i < graph->V; ++i) {
-        int *v = (int *) malloc(sizeof(int)); //fazer isto fora e depois mudar só e dar os "free(v)" só no fim
-        if (v == NULL) printf("failed malloc\n");;
+		wt[i] = 0;
+        st[i] = false;
+
+        int* v = (int *) malloc(sizeof(int)); //fazer isto fora e depois mudar só e dar os "free(v)" só no fim
+        if (v == NULL) printf("failed malloc\n");
         
         *v = i;
         Direct_Insert(h, (Item) v);
@@ -115,7 +120,7 @@ int main(int argc, char *argv[])
     //READY FOR DIJKSTRA
 
     int exploredtotal = 0;
-	for (int i =1, j=0; i <= 500; ++i) {
+	for (int i =1, j=0; i <= 100; ++i) {
 	//for (int i =1, j=0; i <= MAXSIZE; ++i) {
 		if (graph->tier1[i] > 0)
 			exploredtotal+=GenDijkstra(graph, h, i);
@@ -123,6 +128,8 @@ int main(int argc, char *argv[])
 
 		//printf("\ni: %d\n", i);
 	}
+
+	printf("\nCOUNTER: %d\n", counter);
 	
 	//free memory alloced for dijkstra
 	free(wt); free(st);
@@ -133,7 +140,7 @@ int main(int argc, char *argv[])
 	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
 
 	printf("Elapsed time: %f seconds\n\n", time_spent);
-	//printf("There are %d ASes\n", vertexes);
+	printf("There are %d ASes\n", vertexes);
 	//printf("Dijkstra explored %d nodes\n\n", exploredNodes);
 	printf("Dijkstra explored %d nodes\n\n", exploredtotal);
 

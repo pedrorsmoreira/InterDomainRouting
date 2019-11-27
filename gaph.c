@@ -3,6 +3,8 @@
 
 
 #include "graph.h"
+
+extern int counter;
   
 // A utility function to create a new adjacency list node 
 struct AdjListNode* newAdjListNode(int dest, int relation) 
@@ -192,6 +194,8 @@ int LessNum(Item a, Item b)
     aa = *((int *)a);
     bb = *((int *)b);
 
+    ++counter;
+
     return (wt[aa] < wt[bb]);
 }
 
@@ -200,9 +204,9 @@ int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
     resetHeapElementsNr(h, MAXSIZE);
     int explored_nodes = 0;
 
-    int *HeapPositions = getHeapElementes_pos(h);
-    int* v=NULL; 
-    struct AdjListNode* t=NULL;
+    int* HeapPositions = getHeapElementes_pos(h);
+    int* v = NULL; 
+    struct AdjListNode* t = NULL;
 
     for (int i = 0; i < graph->V; ++i) {
         if (graph->tier1[i] == 0)
@@ -231,11 +235,11 @@ int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
                 lastcost[t->dest] = (t->relation == 2) ? t->relation - 1 : t->relation;
                 FixUp(h, HeapPositions[t->dest]);
 
-                //printf("wt[t->dest] é %d lastcost[t->dest] %d\n", wt[t->dest], lastcost[t->dest]);
+                //printf("t->dest é %d wt[t->dest] é %d lastcost[t->dest] %d\n", t->dest, wt[t->dest], lastcost[t->dest]);
             }
         }
     }
-    if (wt[*v] == maxWT) 
+    //if (wt[*v] == maxWT) 
         //printf("ZZZZZZZZZZZZZZZZZZ, %d |||| %d |||||\n", *v, fakeSource);
     return explored_nodes;
 }

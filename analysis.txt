@@ -2,19 +2,17 @@ Flat profile:
 
 Each sample counts as 0.01 seconds.
   %   cumulative   self              self     total           
- time   seconds   seconds    calls  us/call  us/call  name    
- 64.33      7.69     7.69                             GenDijkstra
- 16.65      9.69     1.99 483848045     0.00     0.00  LessNum
-  8.68     10.72     1.04 19612850     0.05     0.14  FixDown
-  5.33     11.36     0.64 20642313     0.03     0.05  FixUp
-  3.40     11.77     0.41 19612850     0.02     0.16  RemoveMax
-  0.88     11.87     0.11                             checkCommercialConnectedness
-  0.84     11.97     0.10    10560     9.50     9.50  DFS
-  0.08     11.98     0.01      446    22.49    22.49  getHeapElementes_pos
-  0.08     11.99     0.01                             freeGraph
-  0.00     11.99     0.00   246490     0.00     0.00  addEdge
-  0.00     11.99     0.00      446     0.00     0.00  resetHeapElementsNr
-  0.00     11.99     0.00        1     0.00     0.00  createGraph
+ time   seconds   seconds    calls  Ts/call  Ts/call  name    
+100.12      0.01     0.01                             GenDijkstra
+  0.00      0.01     0.00     1963     0.00     0.00  LessNum
+  0.00      0.01     0.00      132     0.00     0.00  FixDown
+  0.00      0.01     0.00      132     0.00     0.00  RemoveMax
+  0.00      0.01     0.00      121     0.00     0.00  FixUp
+  0.00      0.01     0.00       28     0.00     0.00  addEdge
+  0.00      0.01     0.00       11     0.00     0.00  getHeapElementes_pos
+  0.00      0.01     0.00       11     0.00     0.00  resetHeapElementsNr
+  0.00      0.01     0.00        3     0.00     0.00  DFS
+  0.00      0.01     0.00        1     0.00     0.00  createGraph
 
  %         the percentage of the total running time of the
 time       program used by this function.
@@ -43,7 +41,7 @@ name       the name of the function.  This is the minor sort
 	   in parenthesis it shows where it would appear in
 	   the gprof listing if it were to be printed.
 
-Copyright (C) 2012-2019 Free Software Foundation, Inc.
+Copyright (C) 2012-2015 Free Software Foundation, Inc.
 
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
@@ -52,58 +50,46 @@ notice and this notice are preserved.
 		     Call graph (explanation follows)
 
 
-granularity: each sample hit covers 2 byte(s) for 0.08% of 11.99 seconds
+granularity: each sample hit covers 2 byte(s) for 99.88% of 0.01 seconds
 
 index % time    self  children    called     name
                                                  <spontaneous>
-[1]     98.2    7.69    4.08                 GenDijkstra [1]
-                0.41    2.69 19612850/19612850     RemoveMax [2]
-                0.64    0.34 20642313/20642313     FixUp [5]
-                0.01    0.00     446/446         getHeapElementes_pos [9]
-                0.00    0.00     446/446         resetHeapElementsNr [12]
+[1]    100.0    0.01    0.00                 GenDijkstra [1]
+                0.00    0.00     132/132         RemoveMax [4]
+                0.00    0.00     121/121         FixUp [5]
+                0.00    0.00      11/11          resetHeapElementsNr [8]
+                0.00    0.00      11/11          getHeapElementes_pos [7]
 -----------------------------------------------
-                0.41    2.69 19612850/19612850     GenDijkstra [1]
-[2]     25.9    0.41    2.69 19612850         RemoveMax [2]
-                1.04    1.66 19612850/19612850     FixDown [3]
+                0.00    0.00     688/1963        FixDown [3]
+                0.00    0.00    1275/1963        FixUp [5]
+[2]      0.0    0.00    0.00    1963         LessNum [2]
 -----------------------------------------------
-                1.04    1.66 19612850/19612850     RemoveMax [2]
-[3]     22.5    1.04    1.66 19612850         FixDown [3]
-                1.66    0.00 402374640/483848045     LessNum [4]
+                0.00    0.00     132/132         RemoveMax [4]
+[3]      0.0    0.00    0.00     132         FixDown [3]
+                0.00    0.00     688/1963        LessNum [2]
 -----------------------------------------------
-                0.34    0.00 81473405/483848045     FixUp [5]
-                1.66    0.00 402374640/483848045     FixDown [3]
-[4]     16.6    1.99    0.00 483848045         LessNum [4]
+                0.00    0.00     132/132         GenDijkstra [1]
+[4]      0.0    0.00    0.00     132         RemoveMax [4]
+                0.00    0.00     132/132         FixDown [3]
 -----------------------------------------------
-                0.64    0.34 20642313/20642313     GenDijkstra [1]
-[5]      8.1    0.64    0.34 20642313         FixUp [5]
-                0.34    0.00 81473405/483848045     LessNum [4]
+                0.00    0.00     121/121         GenDijkstra [1]
+[5]      0.0    0.00    0.00     121         FixUp [5]
+                0.00    0.00    1275/1963        LessNum [2]
 -----------------------------------------------
-                                                 <spontaneous>
-[6]      0.9    0.11    0.00                 checkCommercialConnectedness [6]
+                0.00    0.00      28/28          readFile [27]
+[6]      0.0    0.00    0.00      28         addEdge [6]
 -----------------------------------------------
-                              460894             DFS [7]
-                0.10    0.00   10560/10560       checkCustomersCycles [8]
-[7]      0.8    0.10    0.00   10560+460894  DFS [7]
-                              460894             DFS [7]
+                0.00    0.00      11/11          GenDijkstra [1]
+[7]      0.0    0.00    0.00      11         getHeapElementes_pos [7]
 -----------------------------------------------
-                                                 <spontaneous>
-[8]      0.8    0.00    0.10                 checkCustomersCycles [8]
-                0.10    0.00   10560/10560       DFS [7]
+                0.00    0.00      11/11          GenDijkstra [1]
+[8]      0.0    0.00    0.00      11         resetHeapElementsNr [8]
 -----------------------------------------------
-                0.01    0.00     446/446         GenDijkstra [1]
-[9]      0.1    0.01    0.00     446         getHeapElementes_pos [9]
+                0.00    0.00       3/3           checkCustomersCycles [17]
+[9]      0.0    0.00    0.00       3         DFS [9]
 -----------------------------------------------
-                                                 <spontaneous>
-[10]     0.1    0.01    0.00                 freeGraph [10]
------------------------------------------------
-                0.00    0.00  246490/246490      readFile [29]
-[11]     0.0    0.00    0.00  246490         addEdge [11]
------------------------------------------------
-                0.00    0.00     446/446         GenDijkstra [1]
-[12]     0.0    0.00    0.00     446         resetHeapElementsNr [12]
------------------------------------------------
-                0.00    0.00       1/1           readFile [29]
-[13]     0.0    0.00    0.00       1         createGraph [13]
+                0.00    0.00       1/1           readFile [27]
+[10]     0.0    0.00    0.00       1         createGraph [10]
 -----------------------------------------------
 
  This table describes the call tree of the program, and was sorted by
@@ -188,7 +174,7 @@ index % time    self  children    called     name
  for that member, how many times it was called from other members of
  the cycle.
 
-Copyright (C) 2012-2019 Free Software Foundation, Inc.
+Copyright (C) 2012-2015 Free Software Foundation, Inc.
 
 Copying and distribution of this file, with or without modification,
 are permitted in any medium without royalty provided the copyright
@@ -196,7 +182,7 @@ notice and this notice are preserved.
 
 Index by function name
 
-   [7] DFS                     [4] LessNum                [13] createGraph
-   [3] FixDown                 [2] RemoveMax              [10] freeGraph
-   [5] FixUp                  [11] addEdge                 [9] getHeapElementes_pos
-   [1] GenDijkstra             [6] checkCommercialConnectedness [12] resetHeapElementsNr
+   [9] DFS                     [2] LessNum                 [7] getHeapElementes_pos
+   [3] FixDown                 [4] RemoveMax               [8] resetHeapElementsNr
+   [5] FixUp                   [6] addEdge
+   [1] GenDijkstra            [10] createGraph
