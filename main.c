@@ -102,10 +102,13 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	//lengthShortestPaths(graph);
-
 	clock_t end = clock();
-	double time_spent = (double)(end - begin) / CLOCKS_PER_SEC;
+	double time_spent1 = (double)(end - begin) / CLOCKS_PER_SEC;
+
+	lengthShortestPaths(graph);
+
+	end = clock();
+	double time_spent2 = (double)(end - begin) / CLOCKS_PER_SEC;
 
 	/********** FREE MEMORY **********/
 
@@ -135,9 +138,9 @@ int main(int argc, char *argv[])
 
 	printf("\n");
 
-	printf("Elapsed time: %f seconds\n\n", time_spent);
+	printf("Elapsed time: %f seconds\n\n", time_spent1+time_spent2);
 
-	printf("Elapsed time in minutes would be in total (est) = %f\n", ((double)(MAXSIZE*time_spent)/ITERATIONS)/60);
+	printf("Elapsed time in minutes would be in total (est) = %f\n", (((double)(MAXSIZE*time_spent1)/ITERATIONS)/60)+time_spent2);
 
 	return 0;  
 }
