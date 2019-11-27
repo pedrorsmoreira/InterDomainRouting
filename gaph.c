@@ -196,7 +196,7 @@ int LessNum(Item a, Item b)
 }
 
 int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
-{   
+{
     resetHeapElementsNr(h, MAXSIZE);
     int explored_nodes = 0;
 
@@ -212,17 +212,19 @@ int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
         st[i] = false;
         lastcost[i] = 3;
     }
-
+//printf("ANTES DO FIX || fakeSource = %d ||| HeapPositions[fakeSource] = %d\n", fakeSource, HeapPositions[fakeSource]);
      wt[fakeSource] = 3;
      FixUp(h, HeapPositions[fakeSource]);
-
+//printf("ACABOU O FIX\n");
+//v = RemoveMax(h);
+//printf("valor de V é %d\n", *v);
     for(v = RemoveMax(h); wt[*v] != maxWT; v = RemoveMax(h),
                                             st[*v] = true, 
                                             ++explored_nodes) {
         //printf("\nDIJKSTRA %d wt[*v] %d\n", *v, wt[*v]);
         //if (wt[*v] == 1){
             ////printf("bazei\n");
-        //    break;
+            //break;
         //}
 
         for (t = graph->array[*v].head; t != NULL; t = t->next) { ////printf("FFFOOOORRRR   %d\n", t->dest);
@@ -235,7 +237,7 @@ int GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
             }
         }
     }
-    if (wt[*v] == maxWT) 
+    //if (wt[*v] == maxWT) 
         //printf("ZZZZZZZZZZZZZZZZZZ, %d |||| %d |||||\n", *v, fakeSource);
     return explored_nodes;
 }

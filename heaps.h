@@ -19,7 +19,7 @@
 typedef struct _heap Heap;
 
 
-Heap *NewHeap(int size, int (*less) (Item, Item));
+Heap *NewHeap(int HeapSize, int GraphSize, int (*less) (Item, Item));
 
 #ifdef WMspecs
 int *getHeapElementes_pos(Heap *h);

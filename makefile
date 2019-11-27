@@ -1,4 +1,4 @@
-CFLAGS= -O2 -Ofast -std=gnu11
+CFLAGS= -O3 -Ofast -std=gnu11
 
 default: program
 

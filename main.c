@@ -101,17 +101,26 @@ int main(int argc, char *argv[])
     st = (bool *) malloc(MAXSIZE * sizeof(bool));
     lastcost = (unsigned int *) malloc(MAXSIZE * sizeof(unsigned int));
 	
-	Heap* h = NewHeap(MAXSIZE, LessNum);
-	int *vertecisPos = getHeapElementes_pos(h);
+    int ASesNumber=0;
+	for (int i = 0; i < graph->V; ++i)
+		if (graph->tier1[i] > 0)
+            ++ASesNumber;
 
-	for (int i = 0; i < graph->V; ++i) {
+	Heap* h = NewHeap(ASesNumber+1, MAXSIZE, LessNum);
+	int *HeapPositions = getHeapElementes_pos(h);
+
+	for (int i = 0, j = 0; i < graph->V; ++i) {
+		if (graph->tier1[i] == 0 && i > 0){
+			HeapPositions[i] = i;
+            continue;
+        }
         int *v = (int *) malloc(sizeof(int)); //fazer isto fora e depois mudar só e dar os "free(v)" só no fim
         if (v == NULL) printf("failed malloc\n");;
         
         *v = i;
         Direct_Insert(h, (Item) v);
-        vertecisPos[i] = i;
-    }
+        HeapPositions[i] = j++;
+    }printf("SETUP DONE\n");
     //READY FOR DIJKSTRA
 
     int exploredtotal = 0;
