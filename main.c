@@ -68,11 +68,16 @@ int main(int argc, char *argv[])
 
 	//for (int i = MAXSIZE; i >= MAXSIZE-ITERATIONS; --i)
 	for (int i = 0; i <= ITERATIONS; ++i) 
-		if (tier1[i] > 0)
+		if (tier1[i] > 0){
 			GenDijkstra(graph, h, i);
 		#ifdef COMMERCIAL
-			providers += ASesNumber - 1 - (peers + customers);
+			providers += ASesNumber - 1;
 		#endif
+		}
+
+#ifdef COMMERCIAL
+	providers -= (peers + customers);
+#endif
 
 	clock_t end = clock();
 	double time_spent1 = (double)(end - begin) / CLOCKS_PER_SEC;
@@ -122,7 +127,7 @@ int main(int argc, char *argv[])
 	
 	printf("\n-> Total\n\n");
 
-	//printf("total ASes: %d\n", ASesNumber);
+	printf("total ASes: %d\n", ASesNumber);
 	printf("providers: %d\n", providers);
 	printf("peers: %d\n", peers);
 	printf("customers: %d\n", customers);
