@@ -66,7 +66,8 @@ int main(int argc, char *argv[])
 
 	Heap* h = setupDijkstra(graph);
 
-	for (int i =1; i <= ITERATIONS; ++i) 
+	//for (int i = MAXSIZE; i >= MAXSIZE-ITERATIONS; --i)
+	for (int i = 0; i <= ITERATIONS; ++i) 
 		if (tier1[i] > 0)
 			GenDijkstra(graph, h, i);
 		#ifdef COMMERCIAL
@@ -77,6 +78,8 @@ int main(int argc, char *argv[])
 	double time_spent1 = (double)(end - begin) / CLOCKS_PER_SEC;
 
 	/********** SHORTEST PATHS **********/
+
+	begin = clock();
 	lengthShortestPaths(graph);
 
 	end = clock();
@@ -129,11 +132,12 @@ int main(int argc, char *argv[])
 	printf("customers route: %f%\n", ((double)customers/totalRoutes)*100);
 
 	printf("\n");
-
 	printf("Total elapsed time for dijkstra: %f seconds\n\n", time_spent1);
 	printf("Total elapsed time: %f seconds\n\n", time_spent1 + time_spent2);
 
-	printf("Elapsed time in minutes would be in total (est) = %f\n", (((double)(MAXSIZE*time_spent1)/ITERATIONS)/60)+time_spent2);
+	printf("Elapsed time in minutes would be for Dijkstra       (est) = %f\n", ((double)(MAXSIZE*(time_spent1))/ITERATIONS)/60);
+	printf("Elapsed time in minutes would be for BFS            (est) = %f\n", ((double)(MAXSIZE*(time_spent2))/ITERATIONS)/60);
+	printf("Elapsed time in minutes would be in total           (est) = %f\n", ((double)(MAXSIZE*(time_spent1+time_spent2))/ITERATIONS)/60);
 
 	return 0;  
 }

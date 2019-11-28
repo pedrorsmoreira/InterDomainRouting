@@ -12,7 +12,7 @@
 #define defsHeader
 
 #define MAXSIZE 65536
-#define ITERATIONS 500
+#define ITERATIONS MAXSIZE
 
 /************************************************
  *  Data type: Item
