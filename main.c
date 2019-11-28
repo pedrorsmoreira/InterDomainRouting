@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
 	
 	printf("\n-> Total\n\n");
 
-	//printf("total ASes: %d\n", ASesNumber);
+	printf("total ASes: %d\n", ASesNumber);
 	printf("providers: %d\n", providers);
 	printf("peers: %d\n", peers);
 	printf("customers: %d\n", customers);

@@ -10,7 +10,7 @@
 
 
 //uncomment to only get statistics from the commercial optimal routes
-//#define COMMERCIAL
+#define COMMERCIAL
 
 struct Graph* readFile(char* filename);
 
