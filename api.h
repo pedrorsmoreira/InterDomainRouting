@@ -6,11 +6,6 @@
 #include "heaps.h"
 #include "queue.h"
 
-#define minWT 0
-
-
-//uncomment to only get statistics from the commercial optimal routes
-#define COMMERCIAL
 
 struct Graph* readFile(char* filename);
 
