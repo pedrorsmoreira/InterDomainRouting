@@ -102,17 +102,21 @@ int main(int argc, char *argv[])
 	totalHops[0] = 0;
 
 	int counter = 0;
-    for (int i = 0; i < 12; ++i)
+    for (int i = 1; i < ITERATIONS; ++i) {
+    	if (totalHops[i] == 0)
+    		break;
         counter += totalHops[i];
+    }
 
     printf("counter %d\n", counter);
 
     int sum = 0;
-    for (int i = 1; i < 12; ++i) 
-    	if (totalHops[i]) {
-    		sum += totalHops[i-1];
-        	printf("P(X>=%d) = %f\n", i, ((double)(counter - sum)/counter)*100);
-    	}
+    for (int i = 1; i < ITERATIONS; ++i) {
+    	sum += totalHops[i-1];
+    	printf("P(X>=%d) = %f\n", i, ((double)(counter - sum)/counter)*100);
+    	if (!totalHops[i])
+    		break;
+    }
     
 	printf("\n---------- COMMERCIAL ROUTE ELECTED ----------\n");
 	
