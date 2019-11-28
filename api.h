@@ -8,6 +8,8 @@
 
 #define minWT 0
 
+//#define COMMERCIAL
+
 struct Graph* readFile(char* filename);
 
 void clearArrays();

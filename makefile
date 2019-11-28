@@ -11,6 +11,9 @@ debug: *.c
 run:
 	./InterDomainRouting -f files/LargeNetwork.txt
 
+run-example:
+	./InterDomainRouting -f files/example.txt
+
 run-debug:
 	./InterDomainRouting-debug -f files/LargeNetwork.txt; gprof InterDomainRouting-debug gmon.out > debug.txt
 

@@ -24,6 +24,8 @@ bool* visited = NULL;
 bool* notPermited = NULL;
 int* tier1 = NULL;
 
+int ASesNumber = 0;
+
 int main(int argc, char *argv[]) 
 {
 	int opt;
@@ -67,6 +69,9 @@ int main(int argc, char *argv[])
 	for (int i =1; i <= ITERATIONS; ++i) 
 		if (tier1[i] > 0)
 			GenDijkstra(graph, h, i);
+		#ifdef COMMERCIAL
+			providers += ASesNumber - 1 - (peers + customers);
+		#endif
 
 	clock_t end = clock();
 	double time_spent1 = (double)(end - begin) / CLOCKS_PER_SEC;

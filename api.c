@@ -19,6 +19,8 @@ extern bool* visited;
 extern bool* notPermited;
 extern int* tier1;
 
+extern int ASesNumber;
+
 struct Graph* readFile(char* filename)
 {
     FILE *fp = fopen (filename, "r");
@@ -124,7 +126,6 @@ bool checkCommercialConnectedness(struct Graph* graph)
 
 Heap* setupDijkstra()
 {
-    int ASesNumber = 0;
     for (int i = 0; i < MAXSIZE; ++i)
         if (tier1[i] > 0)
             ++ASesNumber;
@@ -215,7 +216,12 @@ void GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
         //printf("\nBeing Explored %d\n", *v);
 
         if (wt[*v] == 1*MAXSIZE)
+        #ifdef COMMERCIAL
+            break;
+        #else
             ++providers;
+        #endif
+
         else if (wt[*v] == 2*MAXSIZE)
             ++peers;
         else
