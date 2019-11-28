@@ -18,4 +18,4 @@ run-debug:
 	./InterDomainRouting-debug -f files/LargeNetwork.txt; gprof InterDomainRouting-debug gmon.out > debug.txt
 
 clean:
-	rm -f *.o InterDomainRouting InterDomainRouting-debug gmn.out
+	rm -f *.o InterDomainRouting InterDomainRouting-debug gmon.out debug.txt
