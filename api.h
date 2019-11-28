@@ -10,7 +10,7 @@
 
 struct Graph* readFile(char* filename);
 
-void clearArrays(struct Graph* graph);
+void clearArrays();
 
 bool DFS(struct Graph* graph, int vertex);
 
@@ -19,6 +19,8 @@ bool checkCustomersCycles(struct Graph* graph);
 bool checkCommercialConnectedness(struct Graph* graph);
 
 
+Heap* setupDijkstra();
+
 int LessNum(Item a, Item b);
 
 void scanList(Heap *h, int* HeapPositions, struct AdjListNode* aux, int source);
@@ -26,11 +28,11 @@ void scanList(Heap *h, int* HeapPositions, struct AdjListNode* aux, int source);
 void GenDijkstra(struct Graph * graph, Heap *h, int fakeSource);
 
 
-void scanListBFS(struct Graph* graph, struct queue* q, struct AdjListNode* aux, bool condition, int currentVertex);
+void scanListBFS(struct queue* q, struct AdjListNode* aux, bool condition, int currentVertex, int* totalHopsBFS);
+
+bool BFS(struct Graph* graph, int startVertex, struct queue* q, bool condition, int* totalHopsBFS);
 
 void lengthShortestPaths(struct Graph* graph);
-
-bool BFS(struct Graph* graph, int startVertex, struct queue* q, bool condition);
 
 /* End if: Protect multiple inclusions                              */
 #endif

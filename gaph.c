@@ -2,6 +2,10 @@
 #include <stdlib.h>
 
 #include "graph.h"
+
+extern bool* visited;
+extern bool* notPermited;
+extern int* tier1;
   
 // A utility function to create a new adjacency list node 
 struct AdjListNode* newAdjListNode(int dest, int relation) 
@@ -28,13 +32,9 @@ struct Graph* createGraph(int V)
     // nodes that are not permited (this two arrays will be 
     // used in the DFS to check customer cyclyes) and the 
     // last one to indicates the nodes that are Tier-1
-    graph->visited = (bool*) malloc(V * sizeof(bool));
-    graph->notPermited = (bool*) malloc(V * sizeof(bool));
-    graph->tier1 = (int*) malloc(V * sizeof(int));
-
-    graph->counterHops = (int*) malloc(V * sizeof(int));
-    graph->totalHops = (int*) malloc(V * sizeof(int));
-
+    visited = (bool*) malloc(V * sizeof(bool));
+    notPermited = (bool*) malloc(V * sizeof(bool));
+    tier1 = (int*) malloc(V * sizeof(int));
 
     // Initialize each adjacency list as empty by  
     // making head as NULL and initialize the rest
@@ -45,12 +45,9 @@ struct Graph* createGraph(int V)
         graph->array[i].peers = NULL;
         graph->array[i].customers = NULL;
 
-        graph->visited[i] = false;
-        graph->notPermited[i] = false;
-        graph->tier1[i] = 0;
-
-        graph->counterHops[i] = 0;
-        graph->totalHops[i] = 0;
+        visited[i] = false;
+        notPermited[i] = false;
+        tier1[i] = 0;
     }
 
     return graph; 
@@ -74,7 +71,7 @@ void addEdge(struct Graph* graph, int src, int dest, int relation)
         newNode->next = graph->array[src].providers; 
         graph->array[src].providers = newNode;
 
-        graph->tier1[src] = 1;    
+        tier1[src] = 1;    
     } else {
         if (relation == 2*MAXSIZE) {
             newNode->next = graph->array[src].peers;
@@ -83,8 +80,8 @@ void addEdge(struct Graph* graph, int src, int dest, int relation)
             newNode->next = graph->array[src].customers;
             graph->array[src].customers = newNode;
         }
-        if (graph->tier1[src] == 0)
-            graph->tier1[src] = 2;
+        if (tier1[src] == 0)
+            tier1[src] = 2;
     }
 } 
 

@@ -8,10 +8,16 @@ extern int providers;
 extern int peers;
 extern int customers;
 
-int* wt = NULL;
-bool* st = NULL;
-int * prevHops = NULL;
-int* lastcost = NULL;
+extern int* wt;
+extern bool* st;
+extern int* lastcost;
+
+extern int* prevHops;
+extern int* totalHops;
+
+extern bool* visited;
+extern bool* notPermited;
+extern int* tier1;
 
 struct Graph* readFile(char* filename)
 {
@@ -48,13 +54,11 @@ struct Graph* readFile(char* filename)
     return graph;
 }
 
-
-
-void clearArrays(struct Graph* graph)
+void clearArrays()
 {
-    for (int i = 0; i < graph->V; i++) {
-        graph->visited[i] = false;
-        graph->notPermited[i] = false;
+    for (int i = 0; i < MAXSIZE; i++) {
+        visited[i] = false;
+        notPermited[i] = false;
     }
 }
 
@@ -62,19 +66,19 @@ bool DFS(struct Graph* graph, int vertex)
 {
     struct AdjListNode* aux = graph->array[vertex].customers;
 
-    graph->visited[vertex] = true;
-    graph->notPermited[vertex] = true;
+    visited[vertex] = true;
+    notPermited[vertex] = true;
 
     while(aux != NULL) {
-        if (graph->notPermited[aux->dest])
+        if (notPermited[aux->dest])
             return false;
-        if (!graph->visited[aux->dest]) 
+        if (!visited[aux->dest]) 
             if (!DFS(graph, aux->dest))
                 return false;
         aux = aux->next;
     }
 
-    graph->notPermited[vertex] = false;
+    notPermited[vertex] = false;
 
     return true;
 }
@@ -82,7 +86,7 @@ bool DFS(struct Graph* graph, int vertex)
 bool checkCustomersCycles(struct Graph* graph)
 {
     for (int i = 0; i < MAXSIZE; i++){
-        if (graph->tier1[i] == 2) {
+        if (tier1[i] == 2) {
             if (!DFS(graph, i))
                 return false;
             clearArrays(graph);
@@ -92,17 +96,15 @@ bool checkCustomersCycles(struct Graph* graph)
     return true;
 }
 
-
-
 bool checkCommercialConnectedness(struct Graph* graph)
 {
     int flag = 0;
     struct AdjListNode* aux = NULL;
 
     for (int i = 0; i < MAXSIZE; i++)
-        if (graph->tier1[i] == 2)
+        if (tier1[i] == 2)
             for(int j = i + 1; j < MAXSIZE; j++)
-                if (graph->tier1[j] == 2) {
+                if (tier1[j] == 2) {
                     flag = 0;
                     aux = graph->array[i].peers;
                     while(aux != NULL) {
@@ -120,6 +122,45 @@ bool checkCommercialConnectedness(struct Graph* graph)
     return true;
 }
 
+Heap* setupDijkstra()
+{
+    int ASesNumber = 0;
+    for (int i = 0; i < MAXSIZE; ++i)
+        if (tier1[i] > 0)
+            ++ASesNumber;
+
+    wt = (int *) malloc(MAXSIZE * sizeof(int));
+    st = (bool *) malloc(MAXSIZE * sizeof(bool));
+    lastcost = (int *) malloc(MAXSIZE * sizeof(int));
+
+    prevHops = (int *) malloc(MAXSIZE * sizeof(int));
+    totalHops = (int *) malloc(MAXSIZE * sizeof(int));
+    
+    // The 1 added to ASesNumber is for a bug correction 
+    // in the dijkstra main cicle (this way the heap will 
+    // always have a node with maxWT)
+    Heap* h = NewHeap(ASesNumber + 1, MAXSIZE, LessNum);
+    int* HeapPositions = getHeapElementes_pos(h);
+
+    for (int i = 0, j = 0; i < MAXSIZE; ++i) {
+        totalHops[i] = 0;
+
+        if (tier1[i] == 0 && i > 0) {
+            HeapPositions[i] = i;
+            continue;
+        }
+        
+        int* v = (int *) malloc(sizeof(int));
+        if (v == NULL) exit(0);
+        
+        *v = i;
+        Direct_Insert(h, (Item) v);
+        HeapPositions[i] = j++;
+    }
+
+    return h;
+}
+
 int LessNum(Item a, Item b)
 {
     int aa, bb;
@@ -133,8 +174,9 @@ int LessNum(Item a, Item b)
 void scanList(Heap *h, int* HeapPositions, struct AdjListNode* aux, int source)
 {
     while(aux) {
-        if (!st[aux->dest] && aux->relation + prevHops[source] + 1 > wt[aux->dest] + prevHops[aux->dest]) {
+        if (!st[aux->dest] && aux->relation - prevHops[source] - 1 > wt[aux->dest] - prevHops[aux->dest]) {
             prevHops[aux->dest] = prevHops[source] + 1;
+            //printf("source %d prevHops[source] %d aux->dest %d prevHops[aux->dest] %d\n", source, prevHops[source], aux->dest, prevHops[aux->dest]);
             wt[aux->dest] = aux->relation;
             lastcost[aux->dest] = aux->relation;
             FixUp(h, HeapPositions[aux->dest]);
@@ -154,8 +196,10 @@ void GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
     int* v = NULL; 
     struct AdjListNode* t = NULL;
 
+    --customers;
+
     for (int i = 0; i < graph->V; ++i) {
-        if (graph->tier1[i] == 0)
+        if (tier1[i] == 0)
             continue;
 
         wt[i] = minWT*MAXSIZE;
@@ -168,6 +212,8 @@ void GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
     FixUp(h, HeapPositions[fakeSource]);
 
     for(v = RemoveMax(h); wt[*v] != minWT; v = RemoveMax(h), st[*v] = true) {
+        //printf("\nBeing Explored %d\n", *v);
+
         if (wt[*v] == 1*MAXSIZE)
             ++providers;
         else if (wt[*v] == 2*MAXSIZE)
@@ -175,7 +221,7 @@ void GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
         else
             ++customers;
 
-        //printf("\nBeing Explored %d\n", *v);
+        ++totalHops[prevHops[*v]];
 
         if (lastcost[*v] == 3*MAXSIZE) {
             scanList(h, HeapPositions, graph->array[*v].providers, *v);
@@ -185,36 +231,35 @@ void GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
     }
 }
 
-void scanListBFS(struct Graph* graph, struct queue* q, struct AdjListNode* aux, bool condition, int currentVertex)
+void scanListBFS(struct queue* q, struct AdjListNode* aux, bool condition, int currentVertex, int* totalHopsBFS)
 {
     while(aux) {
-        if(graph->visited[aux->dest] == condition) {
-            graph->visited[aux->dest] = !condition;
+        if(visited[aux->dest] == condition) {
+            visited[aux->dest] = !condition;
             pushQueue(q, aux->dest);
 
-            graph->counterHops[aux->dest] = graph->counterHops[currentVertex] + 1;
-            ++graph->totalHops[graph->counterHops[aux->dest]];
+            prevHops[aux->dest] = prevHops[currentVertex] + 1;
+            ++totalHopsBFS[prevHops[aux->dest]];
         }
         aux = aux->next;
     }
 }
 
-
-bool BFS(struct Graph* graph, int startVertex, struct queue* q, bool condition) 
+bool BFS(struct Graph* graph, int startVertex, struct queue* q, bool condition, int* totalHopsBFS) 
 {    
-    graph->visited[startVertex] = !condition;
+    visited[startVertex] = !condition;
     pushQueue(q, startVertex);
 
-    graph->counterHops[startVertex] = 0;
+    prevHops[startVertex] = 0;
     
     while(!isEmpty(q)) {
         //printQueue(q);
         int currentVertex = popQueue(q);
-        //printf("Visited %d\ngraph->counterHops[currentVertex] %d\n", currentVertex, graph->counterHops[currentVertex]);
+        //printf("Visited %d\nprevHops[currentVertex] %d\n", currentVertex, prevHops[currentVertex]);
 
-        scanListBFS(graph, q, graph->array[currentVertex].providers,   condition, currentVertex);
-        scanListBFS(graph, q, graph->array[currentVertex].peers,       condition, currentVertex);
-        scanListBFS(graph, q, graph->array[currentVertex].customers,   condition, currentVertex);
+        scanListBFS(q, graph->array[currentVertex].providers,   condition, currentVertex, totalHopsBFS);
+        scanListBFS(q, graph->array[currentVertex].peers,       condition, currentVertex, totalHopsBFS);
+        scanListBFS(q, graph->array[currentVertex].customers,   condition, currentVertex, totalHopsBFS);
     }
 
     return !condition;
@@ -222,29 +267,37 @@ bool BFS(struct Graph* graph, int startVertex, struct queue* q, bool condition)
 
 void lengthShortestPaths(struct Graph* graph)
 {
+    int i;
+    bool condition = false;
+
+    int* totalHopsBFS = (int *) malloc(MAXSIZE * sizeof(int));
+
     struct queue* q = createQueue();
 
-    bool condition = false;
-    int i;
-    for (i = 0; i < graph->V; ++i)
-        graph->visited[i] = condition;
-    
-    for (i = 0; i <= ITERATIONS; ++i) {
-    //for (int i =1; i <= MAXSIZE; ++i) {
-        if (graph->tier1[i] > 0) {
-            condition = BFS(graph, i, q, condition);
-        }
+    for (i = 0; i < graph->V; ++i) {
+        visited[i] = condition;
+        totalHopsBFS[i] = 0;
     }
+    
+    for (i = 0; i <= ITERATIONS; ++i)
+        if (tier1[i] > 0)
+            condition = BFS(graph, i, q, condition, totalHopsBFS);
+        
+
+    printf("\n---------- SHORTEST PATHS ----------\n");
 
     int counter = 0;
-    printf("\n");
-    for (i = 0; i < 12; ++i)
-    {
-        printf("i %d graph->totalHops[i] %d\n", i, graph->totalHops[i]);
-        counter += graph->totalHops[i];
-    }
+    for (int i = 0; i < 12; ++i)
+        counter += totalHopsBFS[i];
 
     printf("counter %d\n", counter);
+
+    int sum = 0;
+    for (int i = 1; i < 12; ++i) 
+        if (totalHopsBFS[i]) {
+            sum += totalHopsBFS[i-1];
+            printf("P(X>=%d) = %f\n", i, ((double)(counter - sum)/counter)*100);
+        }
 
     free(q);  
 }

@@ -30,13 +30,6 @@ struct Graph
 { 
     int V; 
     struct AdjList* array;
-    
-    bool* visited;
-    bool* notPermited;
-    int* tier1;
-
-    int* counterHops;
-    int* totalHops;
 };
 
 struct AdjListNode* newAdjListNode(int dest, int relation);

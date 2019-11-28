@@ -1,0 +1,62 @@
+#rotas por clientes - 26
+#rotas por pares - 12
+#rotas por fornecedores - 72
+#nós sem rotas - 0
+# de rotas - 110
+percentagem de rotas por clientes - 23.6364%
+percentagem de rotas por pares - 10.9091%
+percentagem de rotas por fornecedores - 65.4545%
+Probabilidade complementar cumulativa do comprimento das rotas comercialmente ótimas
+P(X>=6) = 1.818181872%
+P(X>=5) = 9.090909004%
+P(X>=4) = 20.000000000%
+P(X>=3) = 40.000000000%
+P(X>=2) = 74.545455933%
+P(X>=1) = 100.000000000%
+# de rotas - 110
+Probabilidade complementar cumulativa do comprimento de caminhos mais curtos
+P(X>=5) = 1.818181872%
+P(X>=4) = 10.909090996%
+P(X>=3) = 34.545455933%
+P(X>=2) = 74.545455933%
+P(X>=1) = 100.000000000%
+#nós sem rotas - 0
+# de nós - 11
+
+----------------------------------------
+
+asd:
+P(#hops) >= 1: 100.000000%
+P(#hops) >= 2: 61.904762%
+P(#hops) >= 3: 28.571430%
+P(#hops) >= 4: 14.285715%
+P(#hops) >= 5: 4.761905%
+
+Providers: 52.380952
+Peers: 30.952381
+Clients: 16.666667
+
+----------------------------------------
+
+asd 1:
+P(#hops) >= 1: 100.000000%
+P(#hops) >= 2: 50.000000%
+P(#hops) >= 3: 10.000000%
+
+Providers: 55.000000
+Peers: 20.000000
+Clients: 25.000000
+
+----------------------------------------
+
+asd 2 (foi a que eu tinha mal):
+P(#hops) >= 1: 100.000000%
+P(#hops) >= 2: 75.000000%
+P(#hops) >= 3: 50.000000%
+P(#hops) >= 4: 29.166666%
+P(#hops) >= 5: 13.888889%
+P(#hops) >= 6: 4.166667%
+
+Providers: 62.500000
+Peers: 11.111111
+Clients: 26.388889
