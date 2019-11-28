@@ -195,7 +195,6 @@ void GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
 
     int* HeapPositions = getHeapElementes_pos(h);
     int* v = NULL; 
-    struct AdjListNode* t = NULL;
 
     --customers;
 

@@ -131,9 +131,9 @@ int main(int argc, char *argv[])
 
 	printf("\n-> Percentage\n\n");
 
-	printf("providers route: %f%\n", ((double)providers/totalRoutes)*100);
-	printf("peers route: %f%\n", ((double)peers/totalRoutes)*100);
-	printf("customers route: %f%\n", ((double)customers/totalRoutes)*100);
+	printf("providers route: %f\n", ((double)providers/totalRoutes)*100);
+	printf("peers route: %f\n", ((double)peers/totalRoutes)*100);
+	printf("customers route: %f\n", ((double)customers/totalRoutes)*100);
 
 	printf("\n");
 	printf("Total elapsed time for dijkstra: %f seconds\n\n", time_spent1);
