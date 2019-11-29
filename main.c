@@ -53,11 +53,13 @@ int main(int argc, char *argv[])
 
 	struct Graph* graph = readFile(filename);
 
-	if (!checkCustomersCycles(graph))
-		printf("HAVE CUSTOMER CYCLES\n");
+	if (!checkCustomersCycles(graph)) {
+		printf("Graph has a customer cycle\n");
+		exit(1);
+	}
 
 	if (!checkCommercialConnectedness(graph))
-		printf("NOT COMMERCIAL CONNECTED\n");
+		printf("Graph is not commercial connected\n");
 
 	//printGraph(graph);
 	//printf("\n");
@@ -66,9 +68,8 @@ int main(int argc, char *argv[])
 
 	Heap* h = setupDijkstra(graph);
 
-	//for (int i = MAXSIZE; i >= MAXSIZE-ITERATIONS; --i)
 	for (int i = 0; i <= ITERATIONS; ++i) 
-		if (tier1[i] > 0){
+		if (tier1[i] > 0) {
 			GenDijkstra(graph, h, i);
 		#ifdef COMMERCIAL
 			providers += ASesNumber - 1;
@@ -85,6 +86,7 @@ int main(int argc, char *argv[])
 	/********** SHORTEST PATHS **********/
 
 	begin = clock();
+
 	lengthShortestPaths(graph);
 
 	end = clock();
@@ -99,7 +101,7 @@ int main(int argc, char *argv[])
 
 	/********** PRINTS **********/
 
-	printf("\n---------- COMMERCIAL PATHS ----------\n");
+	printf("\n---------- COMMERCIAL PATHS ----------\n\n");
 
 	// This is just to not count with the hops
 	// that are 0, so corresponding to the start 
@@ -113,40 +115,38 @@ int main(int argc, char *argv[])
         counter += totalHops[i];
     }
 
-    printf("counter %d\n", counter);
-
     int sum = 0;
     for (int i = 1; i < ITERATIONS; ++i) {
     	sum += totalHops[i-1];
-    	printf("P(X>=%d) = %f\n", i, ((double)(counter - sum)/counter)*100);
+    	printf("P(X>=%d) = %f%\n", i, ((double)(counter - sum)/counter)*100);
     	if (!totalHops[i])
     		break;
     }
-    
-	printf("\n---------- COMMERCIAL ROUTE ELECTED ----------\n");
+
+	printf("\n---------- COMMERCIAL ROUTE ELECTED ----------\n\n");
 	
-	printf("\n-> Total\n\n");
-
-	printf("total ASes: %d\n", ASesNumber);
-	printf("providers: %d\n", providers);
-	printf("peers: %d\n", peers);
-	printf("customers: %d\n", customers);
+	printf("Total ASes:   %d\n\n", ASesNumber);
+	printf("Providers:    %d\n", providers);
+	printf("Peers:        %d\n", peers);
+	printf("Customers:    %d\n", customers);
 	int totalRoutes = providers + peers + customers;
-	printf("total routes: %d\n", totalRoutes);
+	printf("Total Routes: %d\n", totalRoutes);
 
-	printf("\n-> Percentage\n\n");
+	printf("\nSTATISTICS\n\n");
 
-	printf("providers route: %f\n", ((double)providers/totalRoutes)*100);
-	printf("peers route: %f\n", ((double)peers/totalRoutes)*100);
-	printf("customers route: %f\n", ((double)customers/totalRoutes)*100);
+	printf("Providers Routes: %f%\n", ((double)providers/totalRoutes)*100);
+	printf("Peers Routes:     %f%\n", ((double)peers/totalRoutes)*100);
+	printf("Customers Routes: %f%\n", ((double)customers/totalRoutes)*100);
 
-	printf("\n");
-	printf("Total elapsed time for dijkstra: %f seconds\n\n", time_spent1);
-	printf("Total elapsed time: %f seconds\n\n", time_spent1 + time_spent2);
+	printf("\n---------- EXECUTION TIMES ----------\n\n");
 
-	printf("Elapsed time in minutes would be for Dijkstra       (est) = %f\n", ((double)(MAXSIZE*(time_spent1))/ITERATIONS)/60);
-	printf("Elapsed time in minutes would be for BFS            (est) = %f\n", ((double)(MAXSIZE*(time_spent2))/ITERATIONS)/60);
-	printf("Elapsed time in minutes would be in total           (est) = %f\n", ((double)(MAXSIZE*(time_spent1+time_spent2))/ITERATIONS)/60);
+	printf("Total elapsed time for Dijkstra: %f seconds\n", time_spent1);
+	printf("Total elapsed time for BFS:      %f seconds\n", time_spent2);
+	printf("Total elapsed time:              %f seconds\n\n", time_spent1 + time_spent2);
+
+	printf("Elapsed time in minutes would be for Dijkstra (est) = %f minutes\n", ((double)(MAXSIZE*(time_spent1))/ITERATIONS)/60);
+	printf("Elapsed time in minutes would be for BFS      (est) = %f minutes\n", ((double)(MAXSIZE*(time_spent2))/ITERATIONS)/60);
+	printf("Elapsed time in minutes would be in total     (est) = %f minutes\n", ((double)(MAXSIZE*(time_spent1+time_spent2))/ITERATIONS)/60);
 
 	return 0;  
 }

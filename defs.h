@@ -1,12 +1,3 @@
-/******************************************************************************
- *
- * File Name: defs.h
- *	      (c) 2016 AED
- * Authors:    Pedro Moreira & André Godinho
- *
- *******************************************************************************/
-
-
 /* Prevent multiple inclusions                                      */
 #ifndef defsHeader
 #define defsHeader
@@ -18,7 +9,6 @@
 
 //uncomment to only get statistics from the commercial optimal routes
 //#define COMMERCIAL
-
 
 /************************************************
  *  Data type: Item

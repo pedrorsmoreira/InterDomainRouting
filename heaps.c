@@ -1,17 +1,3 @@
-/******************************************************************************
- *
- * File Name: heaps.c
- *	      (c) 2016 AED
- * Authors:    Pedro Moreira & André Gondinho
- *
- * DESCRIPTION
- *		implements tree auxiliary functions for any type of trees, plus some
- *		specifications for a program (wordmorph) where the heap data is
- *		filled with with integers. The specifications that can be put
- *		unfunctional just by not defining WMspecs.
- *
- *****************************************************************************/
-
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -181,7 +167,7 @@ Item RemoveMax(Heap * h)
  *
  * Arguments: h - pointer to heap
  *            element - pointer to new element
- * Returns: vopid
+ * Returns: 1 or 0
  * Side-Effects: none
  *
  * Description: add element at the end of heap but does not perform fixup
@@ -201,7 +187,7 @@ int Direct_Insert(Heap * h, Item element)
  * CleanHeap()
  *
  * Arguments: Heap
- * Returns: none
+ * Returns: None
  * Side-Effects: None
  *
  * Description: cleans an heap

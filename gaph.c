@@ -93,7 +93,7 @@ void printGraph(struct Graph* graph)
 
     int v;
     for (v = 0; v < ITERATIONS; ++v) {
-        printf("\n\n--------------------\nVERTEX: %d\n\n", v);
+        printf("\n\n---------- VERTEX: %d ----------\n\n", v);
 
         printf("providers\n");
         pCrawl = graph->array[v].providers;
@@ -120,7 +120,7 @@ void printGraph(struct Graph* graph)
 
 void freeAdjList(struct AdjListNode * list)
 {
-    while (list != NULL){
+    while (list != NULL) {
         struct AdjListNode *aux = list->next;
         free(list);
         list = aux;

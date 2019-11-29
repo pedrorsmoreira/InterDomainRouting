@@ -29,8 +29,6 @@ struct Graph* readFile(char* filename)
         exit(1);
     }
 
-    // APAGUEI O +1 - CONFIRMAR QUE NAO HA STRESS
-    //the 1 added to MAXSIZE is for a bug correction in the dijkstra main cicle (this way the heap will always have a node with maxWT)
     struct Graph* graph = createGraph(MAXSIZE);
 
     char line[128]; /* maximum line size */
@@ -177,12 +175,9 @@ void scanList(Heap *h, int* HeapPositions, struct AdjListNode* aux, int source)
     while(aux) {
         if (!st[aux->dest] && aux->relation - prevHops[source] - 1 > wt[aux->dest] - prevHops[aux->dest]) {
             prevHops[aux->dest] = prevHops[source] + 1;
-            //printf("source %d prevHops[source] %d aux->dest %d prevHops[aux->dest] %d\n", source, prevHops[source], aux->dest, prevHops[aux->dest]);
             wt[aux->dest] = aux->relation;
             lastcost[aux->dest] = aux->relation;
             FixUp(h, HeapPositions[aux->dest]);
-
-            //printf("aux->dest é %d wt[aux->dest] é %d lastcost[aux->dest] %d\n", aux->dest, wt[aux->dest], lastcost[aux->dest]);
         }
 
         aux = aux->next;
@@ -196,6 +191,7 @@ void GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
     int* HeapPositions = getHeapElementes_pos(h);
     int* v = NULL; 
 
+    // This is just to not count with the fakeSource
     --customers;
 
     for (int i = 0; i < graph->V; ++i) {
@@ -212,8 +208,6 @@ void GenDijkstra(struct Graph * graph, Heap *h, int fakeSource)
     FixUp(h, HeapPositions[fakeSource]);
 
     for(v = RemoveMax(h); wt[*v] != minWT; v = RemoveMax(h), st[*v] = true) {
-        //printf("\nBeing Explored %d\n", *v);
-
         if (wt[*v] == 1*MAXSIZE)
         #ifdef COMMERCIAL
             break;
@@ -260,7 +254,6 @@ bool BFS(struct Graph* graph, int startVertex, struct queue* q, bool condition, 
     while(!isEmpty(q)) {
         //printQueue(q);
         int currentVertex = popQueue(q);
-        //printf("Visited %d\nprevHops[currentVertex] %d\n", currentVertex, prevHops[currentVertex]);
 
         scanListBFS(q, graph->array[currentVertex].providers,   condition, currentVertex, totalHopsBFS);
         scanListBFS(q, graph->array[currentVertex].peers,       condition, currentVertex, totalHopsBFS);
@@ -289,20 +282,22 @@ void lengthShortestPaths(struct Graph* graph)
             condition = BFS(graph, i, q, condition, totalHopsBFS);
         
 
-    printf("\n---------- SHORTEST PATHS ----------\n");
+    printf("\n---------- SHORTEST PATHS ----------\n\n");
 
     int counter = 0;
-    for (int i = 0; i < 12; ++i)
-        counter += totalHopsBFS[i];
-
-    printf("counter %d\n", counter);
+    for (i = 1; i < ITERATIONS; ++i) {
+        if (totalHops[i] == 0)
+            break;
+        counter += totalHops[i];
+    }
 
     int sum = 0;
-    for (int i = 1; i < 12; ++i) 
-        if (totalHopsBFS[i]) {
-            sum += totalHopsBFS[i-1];
-            printf("P(X>=%d) = %f\n", i, ((double)(counter - sum)/counter)*100);
-        }
+    for (i = 1; i < ITERATIONS; ++i) {
+        sum += totalHopsBFS[i-1];
+        printf("P(X>=%d) = %f%\n", i, ((double)(counter - sum)/counter)*100);
+        if (!totalHopsBFS[i])
+            break;
+    }
 
     free(q);  
 }

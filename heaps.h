@@ -1,11 +1,3 @@
-/******************************************************************************
- *
- * File Name: heaps.c
- *	      (c) 2016 AED
- * Authors:    Pedro Moreira & André Godinho
- *
- *******************************************************************************/
-
 /* Prevent multiple inclusions                                      */
 #ifndef GenerealHeapFuncs
 #define GeneralHeapFuncs
@@ -36,7 +28,6 @@ void CleanHeap(Heap * h);
 void FreeHeap(Heap * h);
 
 void resetHeapElementsNr(Heap *h);
-
 
 /* End if: Protect multiple inclusions                              */
 #endif
